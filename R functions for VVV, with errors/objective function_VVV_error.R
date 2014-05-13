@@ -17,7 +17,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
   
   ### Construct covariance matrix:
   ### First convert param into lower triangular matrices, using lowerTriangle() from package GDATA
-    library(gdata)
+    # library(gdata)
   
     m = p*(p+1)/2
   
@@ -80,6 +80,103 @@ obj.fun.VVV.err =  function(param,z,data,err){
     return(out)
     
 }
+
+
+
+#------------------------------------------------------------------#
+
+
+
+objfun.test = function(){
+  
+  # when error is zero, expect value to be the same as loglik in error-free case.
+  library(MASS) 
+  library(gdata)
+  set.seed(0)  
+  mu1 = c(9,9)
+  mu2 = c(4,-9)
+  mu3 = c(-9,4)
+  
+  nvec = c(30,30,40)
+  n = sum(nvec)
+  p = 2
+  G = 3
+  
+  sigma1 = matrix(c(2,1,1,2),nrow=2)
+  sigma2 = matrix(c(4,-1,-1,3),nrow=2)
+  sigma3 = matrix(c(5,3,3,5),nrow=2)
+  
+  sigma = array(0,dim=c(p,p,G))
+  sigma[,,1] = sigma1
+  sigma[,,2] = sigma2
+  sigma[,,3] = sigma3
+  
+  s1 = mvrnorm(nvec[1], mu1, sigma1)
+  s2 = mvrnorm(nvec[2], mu2, sigma2)
+  s3 = mvrnorm(nvec[3], mu3, sigma3)
+  
+  # membership matrix:
+  temp = c(rep(c(1,0,0),30),rep(c(0,1,0),30),rep(c(0,0,1),40))
+  z = matrix(temp, nrow=n, byrow=TRUE)
+  
+  data = rbind(s1,s2,s3)
+  
+  err = array(0, dim=c(p,p,n))
+
+  param = numeric()
+    for(k in 1:G){
+      param = c(param, lowerTriangle(t(chol(sigma[,,k])), diag=TRUE))
+    }
+  
+  obj.fun.VVV(param,z,data)
+  obj.fun.VVV.err(param,z,data,err)
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

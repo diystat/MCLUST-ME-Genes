@@ -10,10 +10,11 @@ obj.fun.VVV = function(param,z,data){
     p=ncol(data)
     G=ncol(z)
     length(param) = G*p*(p+1)/2
+    piconst = n*p*log(2*pi)/2
   
   ### Construct covariance matrix:
   ### First convert param into lower triangular matrices, using lowerTriangle() from package GDATA
-    library(gdata)
+    # library(gdata)
   
     m = p*(p+1)/2
   
@@ -22,7 +23,6 @@ obj.fun.VVV = function(param,z,data){
         lowerTriangle(L[,,k],diag=TRUE) = param[(m*k-m+1):(m*k)]
       }
     
-    # print(L)
   
   ### Then obtain the cov matrices:
     cov.mat = array(0, dim=c(p, p, G))
@@ -30,7 +30,6 @@ obj.fun.VVV = function(param,z,data){
         cov.mat[,,k] = L[,,k] %*% t(L[,,k])
       }
   
-    # print(cov.mat)
   
   
   ### After rewritting the log-likelihood for complete data, the objective function
@@ -41,6 +40,7 @@ obj.fun.VVV = function(param,z,data){
     W = wkmat(z, data) # see function wmat in "W matrix.R"
   
     clustcount = colSums(z) + .Machine$double.xmin # n_k
+    phat = clustcount/n # n_k/n
   
   
   ### From the last step, the objective function is thus:
@@ -50,8 +50,9 @@ obj.fun.VVV = function(param,z,data){
         maxfun = maxfun + sum(diag(W[,,k]%*%solve(cov.mat[,,k]))) + clustcount[k]*log(det(cov.mat[,,k]))
       }
   
+    out = (1/2) * maxfun + piconst - sum(colSums(z)*log(phat))
   
-    return(maxfun)
+    return(out)
     
 }
 
@@ -62,35 +63,6 @@ obj.fun.VVV = function(param,z,data){
 #----------------------------------------------------------------------------------------#
 
 
-
-
-## debugging
-obj.fun.VVV.test = function(){
-  
-  p = 2
-  n = 100
-  G = 3
-  
-  ini.mat = matrix(0, p, p)
-  diag(ini.mat) = 1
-  ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
-  
-  obj.fun.VVV(ini.par, z, samp) # error: system singular
-  
-  
-  ## check if L is correct
-  m = p*(p+1)/2
-  
-    L = array(0, dim=c(p, p, G))
-      for(k in 1:G){
-        lowerTriangle(L[,,k],diag=TRUE) = ini.par[m*k-m+1:m*k]
-      }
-  
-  k = 2
-  ini.par[4:6]
-  ini.par[(m*k-m+1):(m*k)] # should include parentheses, otherwise incorrect
-  
-}
 
 
 

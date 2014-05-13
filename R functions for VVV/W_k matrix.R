@@ -20,7 +20,8 @@ wkmat = function(z, data){
     
   for(k in 1:G){
     for(i in 1:n){
-      W[,,k] = W[,,k] + z[i,k]*(data[i,]-muhat[,k])%*%t(data[i,]-muhat[,k])
+      temp = data[i,] - muhat[,k]
+      W[,,k] = W[,,k] + z[i,k]*tcrossprod(temp)
     }
   }
   
