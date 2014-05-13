@@ -2,6 +2,7 @@
 
 
 library(MASS);
+library(corpcor)
 
 ## File names
 file.nb.data = "data/2014-01-29_normalized.nb.data.Rdata";
@@ -63,10 +64,11 @@ compute.variance = function() {
   sd1 = matrix(NA, m, 5);
 
   ## DEBUG: when i = 12, some beta.hat tend to -Inf.
-  for (i in ss[1:100]) {
-  ## for (i in ss) {
+  for (i in ss) {
     j = full$j[,,i];
-    v1[,,i] = ginv(j)[-1,-1][1:5, 1:5]; # get rid of dispersion parameter(1st row/col)
+    v1[,,i] = ginv(j)[-1,-1][1:5, 1:5]; # result has NAs
+    # v1[,,i] = ginv(j[-1,-1][1:5, 1:5]) # still has NAs
+    # v1[,,i] = pseudoinverse(j)[-1,-1][1:5, 1:5]
     sd1[i,] = sqrt(diag(v1[,,i]));
   }
 
@@ -130,14 +132,6 @@ find.top.genes = function() {
 
 
   print(load("rnaseq_data.RData"))
-
-
-
-
-
-
-
-
 
 
 
