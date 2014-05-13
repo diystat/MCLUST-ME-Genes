@@ -1,6 +1,6 @@
 
 
-## Analysis of Di's RNA-Seq data
+## Analysis of RNA-Seq data
 
   print(load("../Di's data/rnaseq_data.RData"))
   # "coef" contains 500 observations of dimension 5. dim=c(500,5)
@@ -9,36 +9,33 @@
   ## obtain initial classification:
   library(mclust)
   
+  ## subset data:
+  n = 500
+  coef = coef[1:n,]
+  err = err[,,1:n]
+  
+  G = 3 # number of clusters
+  
+  ## obtain an initial classification, using hierarchical clustering:
   hctree = hc("VVV", coef)
-  temp = as.numeric(hclass(hctree, 8))
+  temp = as.numeric(hclass(hctree, G))
     
-  ini.class = matrix(0, 500, 8)
-    for(i in 1:500){
+  ini.class = matrix(0, n, G)
+    for(i in 1:n){
       g = temp[i]
       ini.class[i,g] = 1
     }
   
   
+  
   ## our method:
   tmp = proc.time()
-  my.class = ME.VVV.err(coef, ini.class, err)$z
+  my.result = ME.VVV.err(coef, ini.class, err)
   proc.time() - tmp
   
   
   ## mclust's method:
   tmp = proc.time()
-  mc.class = meVVV(coef, ini.class)$z
+  mc.result = meVVV(coef, ini.class)
   proc.time() - tmp
   
-  
-  
-  
-  
-  
-  
-
-
-
-
-
-

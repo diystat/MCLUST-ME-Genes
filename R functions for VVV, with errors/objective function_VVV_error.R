@@ -13,6 +13,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
     p=ncol(data)
     G=ncol(z)
     length(param) = G*p*(p+1)/2
+    piconst = n*p*log(2*pi)/2
   
   ### Construct covariance matrix:
   ### First convert param into lower triangular matrices, using lowerTriangle() from package GDATA
@@ -25,7 +26,6 @@ obj.fun.VVV.err =  function(param,z,data,err){
         lowerTriangle(L[,,k],diag=TRUE) = param[(m*k-m+1):(m*k)]
       }
     
-    # print(L)
   
   ### Then obtain the cov matrices:
     cov.mat = array(0, dim=c(p, p, G))
@@ -33,9 +33,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
         cov.mat[,,k] = L[,,k] %*% t(L[,,k])
       }
   
-    # print(cov.mat)
-  
-  
+    
   ### After rewritting the log-likelihood for complete data, the objective function
   ### becomes:
   ###    F(Sigma) = sum_i sum_k z_ik*t(x_i-muhat_k)*(Sigma_k+Sigma_i)^(-1)*(x_i-muhat_k) + sum_i sum_k z_ik*log(det(Sigma_k+Sigma_i))
@@ -71,7 +69,15 @@ obj.fun.VVV.err =  function(param,z,data,err){
       }
   
   
-    return(maxfun)
+  ## obtain mixing proportion estimate:
+    clustcount = colSums(z) + .Machine$double.xmin # n_k
+    phat = clustcount/n # n_k/n
+  
+  
+  ## maximizing the likelihood is minimizing its opposite:
+    out = (1/2) * maxfun + piconst - sum(colSums(z)*log(phat))
+  
+    return(out)
     
 }
 

@@ -15,44 +15,46 @@ MstepVVV.err = function(z, data, err){
   
     
   ## acquire covariance matrix esimates, using analytic result from Celeux and Govaert (1995):
-  wk = wkmat(z, data)
-  dim = c(p, p, G)
-  sigma = array(0,dim=dim)
-    for(k in 1:G){
-      sigma[,,k] = wk[,,k]/clustcount[k]
-    }
+  # wk = wkmat(z, data)
+  # dim = c(p, p, G)
+  # sigma = array(0,dim=dim)
+  #   for(k in 1:G){
+  #     sigma[,,k] = wk[,,k]/clustcount[k]
+  #   }
   
   
-  ini.mat = sigma # use analytic solution as initial value
+  # ini.mat = sigma # use analytic solution as initial value
   
-  ini.par = numeric()
-    for(k in 1:G){
-      ini.par = c(ini.par, lowerTriangle(t(chol(ini.mat[,,k])), diag=TRUE)) # extract initial lower triangular elements
-    }
+  # ini.par = numeric()
+  #   for(k in 1:G){
+  #     ini.par = c(ini.par, lowerTriangle(t(chol(ini.mat[,,k])), diag=TRUE)) # extract initial lower triangular elements
+  #   }
   
   
   
   # use identity as initial value for cov matrix:   
-  # ini.mat = matrix(0, p, p)
-  # diag(ini.mat) = 1
-  # ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
+  ini.mat = matrix(0, p, p)
+  diag(ini.mat) = 1
+  ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
   
   
   # set lower bounds for parameters:
-  library(gdata)
-  lower.bound = array(-Inf, dim=c(p, p, G))
-  lower = numeric()
-    for(k in 1:G){
-      diag(lower.bound[,,k]) = 0.001
-      lower = c(lower, lowerTriangle(lower.bound[,,k], diag=TRUE)) # set lower bound for lower triangle elements
-    }
+  # library(gdata)
+  # lower.bound = array(-Inf, dim=c(p, p, G))
+  # lower = numeric()
+  #   for(k in 1:G){
+  #     diag(lower.bound[,,k]) = 0.001
+  #     lower = c(lower, lowerTriangle(lower.bound[,,k], diag=TRUE)) # set lower bound for lower triangle elements
+  #   }
   
   
   
   ## find arg max for objective functin w.r.t. the covariance matrix
-  param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err,
-    lower=lower, method="L-BFGS-B")$par
+  # param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err,
+  #   lower=lower, method="L-BFGS-B")$par
+  param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err)$par # used Nelder-Mead instead
   
+  # print(obj.fun.VVV.err(param.est,z,data,err))
   
   ## transform back to covariance matrices:
   m = p*(p+1)/2
@@ -74,15 +76,14 @@ MstepVVV.err = function(z, data, err){
           temp1 = temp1 + z[i,k]*tem
           temp2 = temp2 + z[i,k]*tem%*%data[i,]
         }
-        muhat[,k] = solve(temp1) %*% temp2
+        muhat[,k] = solve(temp1, temp2)
       }
   
   
   
-  
-  
+    
   ## put estimates together into a list:
-  parameters = list(muhat=muhat, phat=phat, sigma=sigmahat)
+  parameters = list(muhat=muhat, phat=phat, sigma=sigmahat, parsigma=param.est)
   
   return(parameters)
 }

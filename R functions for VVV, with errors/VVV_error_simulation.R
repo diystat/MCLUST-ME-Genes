@@ -1,8 +1,10 @@
 
 
+library(MASS)
+
 ## simulate well-separated clusters, with correct membership as initial membership matrix:  
 sim.goodini = function(s){
-  nvec = c(3,3,4) * 5
+  nvec = c(3,3,4) * s
   n = sum(nvec)
   p = 2
   
@@ -16,9 +18,9 @@ sim.goodini = function(s){
     diag(err[,,i]) = 0.01
   }
   
-  sigma1 = matrix(c(4,0,0,9),nrow=2)
-  sigma2 = matrix(c(16,0,0,25),nrow=2)
-  sigma3 = matrix(c(36,0,0,49),nrow=2)
+  sigma1 = matrix(c(4,1,1,9),nrow=2)
+  sigma2 = matrix(c(16,2,2,25),nrow=2)
+  sigma3 = matrix(c(36,3,3,49),nrow=2)
   
   s1 = mvrnorm(nvec[1], mu1, (sigma1+err[,,1]))
   s2 = mvrnorm(nvec[2], mu2, (sigma2+err[,,1]))
@@ -33,7 +35,8 @@ sim.goodini = function(s){
   z.ini = z.true
   
   ptm1 = proc.time()
-  my.class = ME.VVV.err(samp, z.ini, err)$z
+  my.result = ME.VVV.err(samp, z.ini, err)
+  my.class = my.result$z
   my.time = proc.time() - ptm1
   
   my.mcr = MCR(my.class, z.true)

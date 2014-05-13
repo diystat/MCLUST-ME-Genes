@@ -13,7 +13,7 @@ EstepVVV.err = function(param, data, err){
   muhat = param[[1]]
   tauhat = param[[2]]
   sigmahat = param[[3]] # here sigmahat is an array consisting of G p*p cov matrices
-  
+  parsigma = param[[4]] # vector of lower triangular elements of cholesky factors of cov matrices
   
   # set initial z matrix:
   zhat = matrix(rep(0,n*G),nrow=n)
@@ -42,9 +42,9 @@ EstepVVV.err = function(param, data, err){
   
   parameters = list(muhat=muhat, tauhat=tauhat, sigmahat=sigmahat)
   
-  loglikelihood = log.lik.vvv.err(param, data, err)
+  loglikelihood = log.lik.vvv.err(parameters, data, err)
   
-  out = list(zhat, parameters, loglikelihood)
+  out = list(zhat, parameters, loglikelihood, parsigma)
   
   return(out) # output estimated z's, parameter estimates and estimated log-likelihood
   
