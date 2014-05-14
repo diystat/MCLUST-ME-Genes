@@ -5,11 +5,6 @@
 
 ME.VVV = function(data, z){
   
-  # source("M-step_VVV.R")
-  # source("E-step_VVV.R")
-  # source("log likelihood_VVV.R")
-  # source("W_k matrix.R")
-  
   n = nrow(data)
   p = ncol(data)
   G = ncol(z)

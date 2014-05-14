@@ -27,7 +27,7 @@ obj.fun.VVV = function(param,z,data){
   ### Then obtain the cov matrices:
     cov.mat = array(0, dim=c(p, p, G))
       for(k in 1:G){
-        cov.mat[,,k] = L[,,k] %*% t(L[,,k])
+        cov.mat[,,k] = tcrossprod(L[,,k])
       }
   
   
@@ -55,12 +55,6 @@ obj.fun.VVV = function(param,z,data){
     return(out)
     
 }
-
-
-
-
-
-#----------------------------------------------------------------------------------------#
 
 
 

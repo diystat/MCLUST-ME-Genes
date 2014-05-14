@@ -19,20 +19,16 @@ MstepVVV = function(z, data){
   
   
   ## acquire covariance matrix esimates, using analytic result from Celeux and Govaert (1995):
-  wk = wkmat(z, data)
-  dim = c(p, p, G)
-  sigma = array(0,dim=dim)
-    for(k in 1:G){
-      sigma[,,k] = wk[,,k]/clustcount[k]
-    }
+  #wk = wkmat(z, data)
+  #dim = c(p, p, G)
+  #sigma = array(0,dim=dim)
+  #  for(k in 1:G){
+  #    sigma[,,k] = wk[,,k]/clustcount[k]
+  #  }
   
   
   
-  ini.mat = sigma # use analytic solution as initial value
-  # ini.mat = matrix(0, p, p)
-  # diag(ini.mat) = 1
-  
-  
+  #ini.mat = sigma # use analytic solution as initial value
   #ini.par = numeric()
   #  for(k in 1:G){
   #    ini.par = c(ini.par, lowerTriangle(t(chol(ini.mat[,,k])), diag=TRUE)) # extract initial lower triangular elements
@@ -45,8 +41,7 @@ MstepVVV = function(z, data){
   ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
   
   
-  
-  library(gdata)
+
   lower.bound = array(-Inf, dim=c(p, p, G))
   lower = numeric()
     for(k in 1:G){
@@ -66,7 +61,7 @@ MstepVVV = function(z, data){
   sigmahat = array(0, dim=c(p, p, G))
     for(k in 1:G){     
       lowerTriangle(sigmahat[,,k], diag=TRUE) = param.est[(m*k-m+1):(m*k)]
-      sigmahat[,,k] = sigmahat[,,k] %*% t(sigmahat[,,k])
+      sigmahat[,,k] = tcrossprod(sigmahat[,,k])
     }
   
   

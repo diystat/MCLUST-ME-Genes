@@ -30,7 +30,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
   ### Then obtain the cov matrices:
     cov.mat = array(0, dim=c(p, p, G))
       for(k in 1:G){
-        cov.mat[,,k] = L[,,k] %*% t(L[,,k])
+        cov.mat[,,k] = tcrossprod(L[,,k])
       }
   
     
@@ -48,11 +48,14 @@ obj.fun.VVV.err =  function(param,z,data,err){
     temp2 = rep(0, p)
       for(k in 1:G){
         for(i in 1:n){
+          z[i,k] = z[i,k] + .Machine$double.xmin # add small number of avoid a singular system
           inv.sum[,,k,i] = solve(cov.mat[,,k]+err[,,i])
           temp1 = temp1 + z[i,k]*inv.sum[,,k,i]
           temp2 = temp2 + z[i,k]*inv.sum[,,k,i]%*%data[i,]
         }
         muhat[,k] = solve(temp1) %*% temp2
+        temp1 = 0
+        temp2 = rep(0, p)
       }
   
   
@@ -70,7 +73,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
   
   
   ## obtain mixing proportion estimate:
-    clustcount = colSums(z) + .Machine$double.xmin # n_k
+    clustcount = colSums(z) # n_k
     phat = clustcount/n # n_k/n
   
   
@@ -89,6 +92,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
 
 objfun.test = function(){
   
+  ### Case 1: zero errors
   # when error is zero, expect value to be the same as loglik in error-free case.
   library(MASS) 
   library(gdata)
@@ -130,6 +134,62 @@ objfun.test = function(){
   
   obj.fun.VVV(param,z,data)
   obj.fun.VVV.err(param,z,data,err)
+  # quite different. Maybe the means are wrong?
+  
+  # after we fixed the mean, they are the same. see muhat.test()
+  
+  
+  
+  
+  
+  ### Case 2: identical errors
+  # loglike should be the same as using VVV loglike without errors, where each
+  # cov matrix is added by error
+  
+  iderr = array(0, dim=c(p,p,n))
+  for(i in 1:n){
+    iderr[,,i] = matrix(0,p,p)
+    diag(iderr[,,i]) = 2
+  }
+  
+  sigma1.e = sigma1 + iderr[,,1]
+  sigma2.e = sigma2 + iderr[,,1]
+  sigma3.e = sigma3 + iderr[,,1]
+  
+  sigma.e = array(0,dim=c(p,p,G))
+  sigma.e[,,1] = sigma1.e
+  sigma.e[,,2] = sigma2.e
+  sigma.e[,,3] = sigma3.e
+  
+  param.e = numeric()
+  for(k in 1:G){
+    param.e = c(param.e, lowerTriangle(t(chol(sigma.e[,,k])), diag=TRUE))
+  }
+  
+  
+  obj.fun.VVV(param.e, z, data)
+  obj.fun.VVV.err(param, z, data, iderr)
+  # the same, so we're okay
+  
+  
+  
+  
+  
+  ### Case 3: column of zeroes in z matrix
+  # see if loglike can handle this situation
+  
+  tmp = c(rep(1,100),rep(0,200))
+  zz = matrix(tmp, nrow=n)
+  
+  obj.fun.VVV(param.e, zz, data) # = 1957.572
+  obj.fun.VVV.err(param, zz, data, iderr)
+  # system singular, so need some modifications
+  
+  # Solution: added a small number to z matrix. Fixed.
+  
+  
+  
+  
   
   
 }
@@ -137,7 +197,39 @@ objfun.test = function(){
 
 
 
-
+muhat.test = function(){
+  # check if the means are the same when error is zero. they should be if code is correct
+  # use data from above
+  
+  muhat = matrix(0, p, G)
+  inv.sum = array(0, dim=c(p,p,G,n))
+  cov.mat = sigma
+  temp1 = 0
+  temp2 = rep(0, p)
+  for(k in 1:G){
+    for(i in 1:n){
+      #inv.sum[,,k,i] = solve(cov.mat[,,k]+err[,,i])
+      inv.sum[,,k,i] = solve(cov.mat[,,k])
+      temp1 = temp1 + z[i,k]*inv.sum[,,k,i]
+      temp2 = temp2 + z[i,k]*inv.sum[,,k,i]%*%data[i,]
+    }
+    muhat[,k] = solve(temp1) %*% temp2
+    temp1 = 0
+    temp2 = rep(0, p) # turns out I forgot to reset the temporary values in the outer loop. Fixed that.
+  }
+  muhat
+  
+  
+  
+  clustcount = colSums(z) 
+  muhat2 = matrix(rep(0,p*G),nrow=p)
+  for(k in 1:G){
+    muhat2[,k] = colSums(data*z[,k])/clustcount[k]
+  }
+  
+  muhat2
+  # now the means are the same  
+}
 
 
 

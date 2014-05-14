@@ -9,7 +9,7 @@ ME.VVV.err = function(data, z, err){
   p = ncol(data)
   G = ncol(z)
 
-  k = 2 # keeps track of number of iteration
+  k = 1 # keeps track of number of iteration
 
   piconst = n*p*log(2*pi)/2
   
@@ -17,13 +17,13 @@ ME.VVV.err = function(data, z, err){
   parameters = list()
 
   llike = rep(0, 10000) # set convergence criterion
-  llike[2] = 0.0011
-  
+  #llike[1] = -.Machine$double.xmax
+ 
 
   # while loop for iteration:
-  while(abs(llike[k]-llike[k-1])>0.001){
+  while(k <= 30){
     
-    print(paste("iteration =",(k-1))) # prints number of iterations
+    print(paste("iteration =",k)) # prints number of iterations
   
     thetahat = MstepVVV.err(z, data, err) # M-step
     
@@ -39,9 +39,9 @@ ME.VVV.err = function(data, z, err){
       
     z = zhat # update membership matrix
     
-    llike[k+1] = (-1/2) * obj.fun.VVV.err(parsigma,z,data,err) - piconst + sum(colSums(z)*log(parameters$tauhat)) # update log likelihood of complete data
+    llike[k] = -obj.fun.VVV.err(parsigma,z,data,err) # update log likelihood of complete data
     
-    print(llike[k+1]) # prints current evaulated complete data log-likelihood
+    print(loglikelihood) # prints current evaulated complete data log-likelihood
       
     k = k+1 # increment k
   }

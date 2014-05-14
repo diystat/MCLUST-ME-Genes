@@ -1,6 +1,5 @@
 
 
-
 ### Suppose "param" is a list containing all estimated parameters from M-step.
 ###
 ### Now we attempt to write the E-step for VVV structure, with estimation error
@@ -42,7 +41,7 @@ EstepVVV.err = function(param, data, err){
   
   parameters = list(muhat=muhat, tauhat=tauhat, sigmahat=sigmahat)
   
-  loglikelihood = log.lik.vvv.err(parameters, data, err)
+  loglikelihood = log.lik.vvv.err(parameters, data, err) # observed log likelihood
   
   out = list(zhat, parameters, loglikelihood, parsigma)
   

@@ -10,11 +10,11 @@
   library(mclust)
   
   ## subset data:
-  n = 500
+  n = 10
   coef = coef[1:n,]
   err = err[,,1:n]
   
-  G = 3 # number of clusters
+  G = 2 # number of clusters
   
   ## obtain an initial classification, using hierarchical clustering:
   hctree = hc("VVV", coef)

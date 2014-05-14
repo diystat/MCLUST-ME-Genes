@@ -39,20 +39,20 @@ MstepVVV.err = function(z, data, err){
   
   
   # set lower bounds for parameters:
-  # library(gdata)
-  # lower.bound = array(-Inf, dim=c(p, p, G))
-  # lower = numeric()
-  #   for(k in 1:G){
-  #     diag(lower.bound[,,k]) = 0.001
-  #     lower = c(lower, lowerTriangle(lower.bound[,,k], diag=TRUE)) # set lower bound for lower triangle elements
-  #   }
+  #library(gdata)
+  lower.bound = array(-Inf, dim=c(p, p, G))
+  lower = numeric()
+    for(k in 1:G){
+      diag(lower.bound[,,k]) = 0.001
+      lower = c(lower, lowerTriangle(lower.bound[,,k], diag=TRUE)) # set lower bound for lower triangle elements
+    }
   
   
   
   ## find arg max for objective functin w.r.t. the covariance matrix
-  # param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err,
-  #   lower=lower, method="L-BFGS-B")$par
-  param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err)$par # used Nelder-Mead instead
+   param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err,
+     lower=lower, method="L-BFGS-B")$par
+  # param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err)$par # used Nelder-Mead instead
   
   # print(obj.fun.VVV.err(param.est,z,data,err))
   
@@ -68,15 +68,17 @@ MstepVVV.err = function(z, data, err){
   
   ## obtain mean estimate:
   muhat = matrix(0, p, G)
-    temp1 = 0
-    temp2 = rep(0, p)
+  temp1 = 0
+  temp2 = rep(0, p)
       for(k in 1:G){
-        for(i in 1:n){
+        for(i in 1:n){         
           tem = solve(sigmahat[,,k]+err[,,i])
           temp1 = temp1 + z[i,k]*tem
           temp2 = temp2 + z[i,k]*tem%*%data[i,]
         }
-        muhat[,k] = solve(temp1, temp2)
+        muhat[,k] = solve(temp1, temp2) 
+        temp1 = 0
+        temp2 = rep(0, p)
       }
   
   
@@ -86,6 +88,89 @@ MstepVVV.err = function(z, data, err){
   parameters = list(muhat=muhat, phat=phat, sigma=sigmahat, parsigma=param.est)
   
   return(parameters)
+}
+
+
+
+#------------------------------------------------------------------------------------#
+
+
+
+mstep.test = function(){
+  
+  
+  ### Case 1: set error to zero. see if results are same as MstepVVV
+  library(MASS) 
+  library(gdata)
+  set.seed(0)  
+  mu1 = c(9,9)
+  mu2 = c(4,-9)
+  mu3 = c(-9,4)
+  
+  nvec = c(30,30,40)
+  n = sum(nvec)
+  p = 2
+  G = 3
+  
+  sigma1 = matrix(c(2,1,1,2),nrow=2)
+  sigma2 = matrix(c(4,-1,-1,3),nrow=2)
+  sigma3 = matrix(c(5,3,3,5),nrow=2)
+  
+  sigma = array(0,dim=c(p,p,G))
+  sigma[,,1] = sigma1
+  sigma[,,2] = sigma2
+  sigma[,,3] = sigma3
+  
+  s1 = mvrnorm(nvec[1], mu1, sigma1)
+  s2 = mvrnorm(nvec[2], mu2, sigma2)
+  s3 = mvrnorm(nvec[3], mu3, sigma3)
+  
+  # membership matrix:
+  temp = c(rep(c(1,0,0),30),rep(c(0,1,0),30),rep(c(0,0,1),40))
+  z = matrix(temp, nrow=n, byrow=TRUE)
+  
+  data = rbind(s1,s2,s3)
+  
+  err = array(0, dim=c(p,p,n))
+  
+  MstepVVV.err(z, data, err)
+  MstepVVV(z, data)
+  # results are the same
+  
+  
+  
+  ### Case 2: when errors are identical, cov matrix estimates should be equal to W_k/n_k - error
+  iderr = array(0, dim=c(p,p,n))
+  for(i in 1:n){
+    iderr[,,i] = matrix(0,p,p)
+    diag(iderr[,,i]) = 2
+  }
+  
+  sigma1.e = sigma1 + iderr[,,1]
+  sigma2.e = sigma2 + iderr[,,1]
+  sigma3.e = sigma3 + iderr[,,1]
+  
+  s1.e = mvrnorm(nvec[1], mu1, sigma1.e)
+  s2.e = mvrnorm(nvec[2], mu2, sigma2.e)
+  s3.e = mvrnorm(nvec[3], mu3, sigma3.e)
+  
+  data.e = rbind(s1.e,s2.e,s3.e)
+  
+  nk = colSums(z)
+  
+  ww = wkmat(z, data.e)
+  ww[,,1] = ww[,,1]/nk[1] - iderr[,,1]
+  ww[,,2] = ww[,,2]/nk[2] - iderr[,,1]
+  ww[,,3] = ww[,,3]/nk[3] - iderr[,,1]
+  
+  
+  MstepVVV.err(z, data.e, iderr)
+  ww
+  # results are the same
+  
+  
+  
+  
 }
 
 

@@ -35,8 +35,8 @@ ME.VVV.iderr = function(data, z, err){
       
     z = zhat # update membership matrix
     
-    llike[k+1] = loglikelihood # update log likelihood
-      
+    llike[k+1] = loglikelihood
+          
     k = k+1 # increment k
   }
   
