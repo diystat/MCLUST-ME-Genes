@@ -14,7 +14,7 @@ p = 2
 
 set.seed(0)
 mu1 = c(1,1)
-mu2 = c(10,-10)
+mu2 = c(5,-5)
 mu3 = c(-25,25)
 
 # set errors to be zero
@@ -24,9 +24,9 @@ for(i in 1:n){
   diag(err[,,i]) = 20
 }
 
-sigma1 = matrix(c(3,0,0,3),nrow=2)
-sigma2 = matrix(c(5,0,0,5),nrow=2)
-sigma3 = matrix(c(7,0,0,7),nrow=2)
+sigma1 = matrix(c(15,-2,-2,15),nrow=2)
+sigma2 = matrix(c(23,3,3,23),nrow=2)
+sigma3 = matrix(c(31,-4,-4,31),nrow=2)
 
 set.seed(0)
 s1 = mvrnorm(nvec[1], mu1, (sigma1+err[,,1]))
@@ -48,13 +48,17 @@ plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
 points(s2, col="blue")
 points(s3, col="red")
 
-my.result = ME.VVV.err(samp, z.ini, err)
-my.class = my.result$z
-my.mcr = MCR(my.class,z.true)
+tmp = proc.time()
+my.result1 = ME.VVV.err(samp, z.ini, err)
+my.class1 = my.result$z
+my.mcr1 = MCR(my.class,z.true)
+my.time1 = proc.time() - tmp
 
-mc.result = meVVV(samp,z.ini)
-mc.class = mc.result$z
-mc.mcr = MCR(mc.class,z.true)
+tmp = proc.time()
+mc.result1 = meVVV(samp,z.ini)
+mc.class1 = mc.result$z
+mc.mcr1 = MCR(mc.class,z.true)
+mc.time1 = proc.time() - tmp
 
 
 #--------------------------------------------------------------------#
@@ -99,15 +103,17 @@ plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
 points(s2, col="blue")
 points(s3, col="red")
 
+tmp = proc.time()
+my.result2 = ME.VVV.err(samp, z.ini, err)
+my.class2 = my.result$z
+my.mcr2 = MCR(my.class,z.true)
+my.time2 = proc.time() - tmp
 
-my.result = ME.VVV.err(samp, z.ini, err)
-my.class = my.result$z
-my.mcr = MCR(my.class,z.true)
-
-mc.result = meVVV(samp,z.ini)
-mc.class = mc.result$z
-mc.mcr = MCR(mc.class,z.true)
-
+tmp = proc.time()
+mc.result2 = meVVV(samp,z.ini)
+mc.class2 = mc.result$z
+mc.mcr2 = MCR(mc.class,z.true)
+mc.time2 = proc.time() - tmp
 
 
 #----------------------------------------------------------------------#
@@ -120,35 +126,48 @@ cc = abs(rnorm(300,4,3))
 err = array(0, dim=c(p,p,n))
 
 for(i in 1:n){
-  L = lowertriangle(cc[(3*n-2):(3*n)],diag=TRUE)
+  L = matrix(0,p,p)
+  lowerTriangle(L,diag=T) = cc[(3*i-2):(3*i)]
   err[,,i] = tcrossprod(L)
 }
 
-samp = matrix(n,p)
+samp = matrix(0,n,p)
 for(i in 1:nvec[1]){
-  samp[i] = mvrnorm(1, mu1, (sigma1+err[,,i]))
+  samp[i,] = mvrnorm(1, mu1, (sigma1+err[,,i]))
 }
 
 for(i in (nvec[1]+1):(n-nvec[3])){
-  samp[i] = mvrnorm(1, mu2, (sigma2+err[,,i]))
+  samp[i,] = mvrnorm(1, mu2, (sigma2+err[,,i]))
 }
 
 for(i in (n-nvec[3]):n){
-  samp[i] = mvrnorm(1, mu3, (sigma3+err[,,i]))
+  samp[i,] = mvrnorm(1, mu3, (sigma3+err[,,i]))
 }
 
 
-my.result = ME.VVV.err(samp, z.ini, err)
-my.class = my.result$z
-my.mcr = MCR(my.class,z.true)
-
-mc.result = meVVV(samp,z.ini)
-mc.class = mc.result$z
-mc.mcr = MCR(mc.class,z.true)
+plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
+points(s2, col="blue")
+points(s3, col="red")
 
 
+tmp = proc.time()
+my.result3 = ME.VVV.err(samp, z.ini, err)
+my.class3 = my.result$z
+my.mcr3 = MCR(my.class,z.true)
+my.time3 = proc.time() - tmp
 
+tmp = proc.time()
+mc.result3 = meVVV(samp,z.ini)
+mc.class3 = mc.result$z
+mc.mcr3 = MCR(mc.class,z.true)
+mc.time3 = proc.time() - tmp
 
+save(my.result1,my.class1,my.mcr1,my.time1,
+  mc.result1,mc.class1,mc.mcr1,mc.time1,
+  my.result2,my.class2,my.mcr2,my.time2,
+  mc.result2,mc.class2,mc.mcr2,mc.time2,
+  my.result3,my.class3,my.mcr3,my.time3,
+  mc.result3,mc.class3,mc.mcr3,mc.time3, file="sim3_results")
 
 
 

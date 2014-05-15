@@ -1,5 +1,7 @@
 
 ### Simulation 1: zero errors
+library(gdata)
+library(mclust)
 library(MASS)
 
 # set sample size
@@ -7,10 +9,9 @@ nvec = c(3,3,4) * 10
 n = sum(nvec)
 p = 2
 
-set.seed(0)
 mu1 = c(1,1)
-mu2 = c(25,-25)
-mu3 = c(-49,49)
+mu2 = c(10,-10)
+mu3 = c(-25,25)
 
 # set errors to be zero
 err = array(0, dim=c(p,p,n))  
@@ -23,6 +24,7 @@ sigma1 = matrix(c(3,0,0,3),nrow=2)
 sigma2 = matrix(c(5,0,0,5),nrow=2)
 sigma3 = matrix(c(7,0,0,7),nrow=2)
 
+set.seed(0)
 s1 = mvrnorm(nvec[1], mu1, (sigma1+err[,,1]))
 s2 = mvrnorm(nvec[2], mu2, (sigma2+err[,,1]))
 s3 = mvrnorm(nvec[3], mu3, (sigma3+err[,,1]))
