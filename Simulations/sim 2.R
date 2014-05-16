@@ -14,9 +14,9 @@ mu2 = c(5,-5)
 mu3 = c(-25,25)
 
 # define cov matrices
-  sigma1 = matrix(c(15,-2,-2,15),nrow=2)
-  sigma2 = matrix(c(23,3,3,23),nrow=2)
-  sigma3 = matrix(c(31,-4,-4,31),nrow=2)
+sigma1 = matrix(c(3,0,0,3),nrow=2)
+sigma2 = matrix(c(5,0,0,5),nrow=2)
+sigma3 = matrix(c(7,0,0,7),nrow=2)
 
 
 # set error value here:
@@ -42,7 +42,7 @@ z.ini = z.true = matrix(temp, nrow=n, byrow=TRUE)
 
 
 my.mcr = mc.mcr = rep(0,length(eps))
-my.time = mc.time = list()
+my.time = mc.time = my.result = mc.result = list()
 
 
 
@@ -66,18 +66,20 @@ for(i in 1:length(eps)){
   points(s3, col="red")  
   
   tmp = proc.time()
-  my.class = ME.VVV.err(samp, z.ini, err.array[,,,i])$z
+  my.result[[i]] = ME.VVV.err(samp, z.ini, err.array[,,,i])
+  my.class = my.result[[i]]$z
   my.mcr[i] = MCR(my.class, z.true)
   my.time[[i]] = proc.time() - tmp
   
   tmp = proc.time()
-  mc.class = meVVV(samp,z.ini)$z
+  mc.result[[i]] = meVVV(samp,z.ini)
+  mc.class = mc.result[[i]]$z
   mc.mcr[i] = MCR(mc.class, z.true)
   mc.time[[i]] = proc.time() - tmp
   
 }
 par(mfrow=c(1,1))
 
-save(my.mcr, mc.mcr, my.time, mc.time, file="sim2_result.RData")
+save(my.mcr, mc.mcr, my.time, mc.time, my.result, mc.result, file="sim2_result.RData")
 
 

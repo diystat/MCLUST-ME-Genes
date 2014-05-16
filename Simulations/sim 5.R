@@ -20,7 +20,7 @@ s = c(1,2,5,10,15,20)
 result = list()
 
 for(i in 1:length(s)){
-  nvec = c(3,3,4) * s
+  nvec = c(3,3,4) * s[i]
   n = sum(nvec)
 
   # set errors:
