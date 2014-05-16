@@ -11,18 +11,18 @@ ME.VVV = function(data, z){
 
   k = 2 # keeps track of number of iteration
 
-  dim = c(n,G,10000)
-  arr = array(dim=dim)
   loglikelihood = NA
   parameters = list()
 
-  arr[,,1] = matrix(rep(0,n*G),nrow=n)
-  arr[,,2] = z
-
-  # num = .Machine$double.xmin
+  llike = rep(0,10000)
+  llike[2] = 0.01
+  
+  tol = 1e-6
 
   # while loop for iteration:
-  while(sum(abs(arr[,,k]-arr[,,(k-1)]))>0.001){
+  while(abs(llike[k]-llike[k-1])>tol){
+    
+    print(paste("iteration = ",k-1))
   
     thetahat = MstepVVV(z, data) # M-step
     
@@ -33,8 +33,12 @@ ME.VVV = function(data, z){
     parameters = temp[[2]] # parameter estimates
     
     loglikelihood = temp[[3]] # records log likelihood
+    
+    print(loglikelihood)
       
-    z = arr[,,(k+1)] = zhat # update membership matrix
+    z = zhat # update membership matrix
+    
+    llike[k+1] = loglikelihood
       
     k = k+1 # increment k
   }

@@ -18,8 +18,11 @@ log.lik.vvv = function(param, data){
   lik = 0
   for(i in 1:n){
     for(k in 1:G){
+      temp1 = sigmahat[,k]
+      L = chol(temp)
+      temp2 = data[i,]-muhat[,k]
       temp[i] = temp[i] + tauhat[k] * (det(sigmahat[,,k]))^(-1/2) * exp((-1/2) * 
-          t(data[i,]-muhat[,k]) %*% solve(sigmahat[,,k]) %*% (data[i,]-muhat[,k]))      
+          crossprod(L%*%temp2))      
     }
     lik = lik + log(temp[i])
   }

@@ -19,16 +19,23 @@ EstepVVV = function(param, data){
   
   piconst = (2*pi)^(-p/2)
   
+  inv.cov = array(0,dim=c(p,p,G))
+  
   denom = rep(0,n)
   for (i in 1:n){
     for (k in 1:G){
-      denom[i] = denom[i] + tauhat[k]*piconst*(det(sigmahat[,,k]))^(-1/2)*exp(-1/2*t(data[i,]-muhat[,k])%*%solve(sigmahat[,,k])%*%(data[i,]-muhat[,k]))
+      inv.cov[,,k] = solve(sigmahat[,,k])
+      L = chol(inv.cov[,,k])
+      temp = data[i,]-muhat[,k]
+      denom[i] = denom[i] + tauhat[k]*piconst*(det(sigmahat[,,k]))^(-1/2)*exp(-1/2*crossprod(L%*%temp))
     }
   }
   
   for(i in 1:n){
     for(k in 1:G){
-      num = tauhat[k]*piconst*(det(sigmahat[,,k]))^(-1/2)*exp(-1/2*t(data[i,]-muhat[,k])%*%solve(sigmahat[,,k])%*%(data[i,]-muhat[,k]))
+      L = chol(inv.cov[,,k])
+      temp = data[i,]-muhat[,k]
+      num = tauhat[k]*piconst*(det(sigmahat[,,k]))^(-1/2)*exp(-1/2*crossprod(L%*%temp))
       zhat[i,k] = num/denom[i]
     }
   }

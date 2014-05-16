@@ -37,7 +37,7 @@ MstepVVV = function(z, data){
   
   
   ini.mat = matrix(0, p, p)
-  diag(ini.mat) = 1
+  diag(ini.mat) = 1+10
   ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
   
   
