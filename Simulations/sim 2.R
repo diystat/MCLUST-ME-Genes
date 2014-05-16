@@ -16,7 +16,7 @@ mu3 = c(-25,25)
 
 
 # set error value here:
-eps = c(0, 5, 10, 20, 30, 40, 50, 100, 150)
+eps = c(0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300)
 
 # set error matrix:
 err = array(0, dim=c(p, p, length(eps)))
@@ -38,9 +38,10 @@ z.ini = z.true = matrix(temp, nrow=n, byrow=TRUE)
 
 
 my.mcr = mc.mcr = rep(0,length(eps))
+my.time = mc.time = list()
 
 
-par(mfrow=c(3,3))
+par(mfrow=c(4,4))
 for(i in 1:length(eps)){
   # define cov matrices
   sigma1 = matrix(c(3,0,0,3),nrow=2)
@@ -64,20 +65,20 @@ for(i in 1:length(eps)){
   points(s2, col="blue")
   points(s3, col="red")  
   
-  
+  tmp = proc.time()
   my.class = ME.VVV.err(samp, z.ini, err.array[,,,i])$z
   my.mcr[i] = MCR(my.class, z.true)
+  my.time[[i]] = proc.time() - tmp
   
+  tmp = proc.time()
   mc.class = meVVV(samp,z.ini)$z
   mc.mcr[i] = MCR(mc.class, z.true)
-  
+  mc.time[[i]] = proc.time() - tmp
   
 }
 par(mfrow=c(1,1))
 
-
-plot(my.mcr,type="l")
-lines(mc.mcr,col="blue")
+save(my.mcr, mc.mcr, my.time, mc.time, file="sim2_result.RData")
 
 
 
