@@ -81,11 +81,3 @@ par(mfrow=c(1,1))
 save(my.mcr, mc.mcr, my.time, mc.time, file="sim2_result.RData")
 
 
-
-
-
-
-
-
-
-

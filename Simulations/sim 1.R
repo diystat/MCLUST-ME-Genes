@@ -52,3 +52,5 @@ library(mclust)
 my.result = ME.VVV.err(samp, z.ini, err)
 
 mc.result = meVVV(samp,z.ini)
+
+save(my.result,mc.result,file="sim1_result.RData")

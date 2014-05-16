@@ -76,7 +76,7 @@ for(i in 1:length(s)){
   
 }
 
-
+save(result,file="sim5_result.RData")
 
 
 

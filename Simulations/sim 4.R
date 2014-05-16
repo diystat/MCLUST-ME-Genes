@@ -275,7 +275,7 @@ mc.time_dim5 = list(mc.time1,mc.time2,mc.time3)
 my.time = list(my.time_dim2,my.time_dim3,my.time_dim4,my.time_dim5)
 mc.time = list(mc.time_dim2,mc.time_dim3,mc.time_dim4,mc.time_dim5)
 
-
+save(my.time,mc.time,file="sim4_results.RData")
 
 
 

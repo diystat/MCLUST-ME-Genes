@@ -21,7 +21,7 @@ mu3 = c(-25,25)
 err = array(0, dim=c(p,p,n))  
 for(i in 1:n){
   err[,,i] = matrix(0,p,p)
-  diag(err[,,i]) = 20
+  diag(err[,,i]) = 10
 }
 
 sigma1 = matrix(c(15,-2,-2,15),nrow=2)
@@ -167,7 +167,7 @@ save(my.result1,my.class1,my.mcr1,my.time1,
   my.result2,my.class2,my.mcr2,my.time2,
   mc.result2,mc.class2,mc.mcr2,mc.time2,
   my.result3,my.class3,my.mcr3,my.time3,
-  mc.result3,mc.class3,mc.mcr3,mc.time3, file="sim3_results")
+  mc.result3,mc.class3,mc.mcr3,mc.time3, file="sim3_results.RData")
 
 
 
