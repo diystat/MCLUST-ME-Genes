@@ -9,14 +9,18 @@ nvec = c(3,3,4) * 10
 n = sum(nvec)
 p = 2
 
-
 mu1 = c(1,1)
-mu2 = c(10,-10)
+mu2 = c(5,-5)
 mu3 = c(-25,25)
+
+# define cov matrices
+  sigma1 = matrix(c(15,-2,-2,15),nrow=2)
+  sigma2 = matrix(c(23,3,3,23),nrow=2)
+  sigma3 = matrix(c(31,-4,-4,31),nrow=2)
 
 
 # set error value here:
-eps = c(0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300)
+eps = c(0, 5, 10, 15, 20, 30)
 
 # set error matrix:
 err = array(0, dim=c(p, p, length(eps)))
@@ -41,13 +45,9 @@ my.mcr = mc.mcr = rep(0,length(eps))
 my.time = mc.time = list()
 
 
-par(mfrow=c(4,4))
-for(i in 1:length(eps)){
-  # define cov matrices
-  sigma1 = matrix(c(3,0,0,3),nrow=2)
-  sigma2 = matrix(c(5,0,0,5),nrow=2)
-  sigma3 = matrix(c(7,0,0,7),nrow=2)
-  
+
+par(mfrow=c(2,3))
+for(i in 1:length(eps)){  
   # sample from dist:
   set.seed(0)
   s1 = mvrnorm(nvec[1], mu1, (sigma1+err[,,i]))
