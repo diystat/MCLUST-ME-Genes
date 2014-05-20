@@ -8,20 +8,24 @@ library(mclust)
 ## Structure 1: identical errors across observations
 
 # set sample size
-nvec = c(3,3,4) * 10
+nvec = c(3,3,4) * 5
 n = sum(nvec)
 p = 2
+G = 3
+
+tau = c(0.3,0.3,0.4)
 
 set.seed(0)
 mu1 = c(1,1)
-mu2 = c(5,-5)
+mu2 = c(10,-10)
 mu3 = c(-25,25)
+mu = cbind(mu1,mu2,mu3)
 
 # set errors to be zero
 err = array(0, dim=c(p,p,n))  
 for(i in 1:n){
   err[,,i] = matrix(0,p,p)
-  diag(err[,,i]) = 10
+  diag(err[,,i]) = 0.1
 }
 
 sigma1 = matrix(c(15,-2,-2,15),nrow=2)
@@ -48,17 +52,20 @@ plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
 points(s2, col="blue")
 points(s3, col="red")
 
+
+
 tmp = proc.time()
-my.result1 = ME.VVV.err(samp, z.ini, err)
-my.class1 = my.result$z
+my.result1 = ME.VVV.err(samp, my.class, err, errstr="identical")
+my.class1 = my.result1$z
 my.mcr1 = MCR(my.class,z.true)
 my.time1 = proc.time() - tmp
 
 tmp = proc.time()
-mc.result1 = meVVV(samp,z.ini)
-mc.class1 = mc.result$z
+mc.result1 = meVVV(samp,mc.class)
+mc.class1 = mc.result1$z
 mc.mcr1 = MCR(mc.class,z.true)
 mc.time1 = proc.time() - tmp
+
 
 
 #--------------------------------------------------------------------#
@@ -67,9 +74,9 @@ mc.time1 = proc.time() - tmp
 ## Structure 2: errors the same within clusters
 
 err = array(0, dim=c(p,p,n))
-err1 = matrix(c(9,1,1,9),nrow=2)
-err2 = matrix(c(1,0,0,1),nrow=2)
-err3 = matrix(c(20,4,4,20),nrow=2)
+err1 = matrix(c(0.1,0,0,0.1),nrow=2)
+err2 = matrix(c(0.3,0,0,0.3),nrow=2)
+err3 = matrix(c(0.5,0,0,0.5),nrow=2)
 
 for(i in 1:nvec[1]){
   err[,,i] = err1
@@ -104,7 +111,7 @@ points(s2, col="blue")
 points(s3, col="red")
 
 tmp = proc.time()
-my.result2 = ME.VVV.err(samp, z.ini, err)
+my.result2 = ME.VVV.err(samp, z.ini, err, "cluster")
 my.class2 = my.result$z
 my.mcr2 = MCR(my.class,z.true)
 my.time2 = proc.time() - tmp
@@ -116,18 +123,22 @@ mc.mcr2 = MCR(mc.class,z.true)
 mc.time2 = proc.time() - tmp
 
 
+
+
 #----------------------------------------------------------------------#
 
 
 
 ### Structure 3: different errors for each observation
 set.seed(999)
-cc = abs(rnorm(300,4,3))
+m = n*p*(p+1)/2
+q = p*(p+1)/2
+cc = abs(rnorm(m,1,1))
 err = array(0, dim=c(p,p,n))
 
 for(i in 1:n){
   L = matrix(0,p,p)
-  lowerTriangle(L,diag=T) = cc[(3*i-2):(3*i)]
+  lowerTriangle(L,diag=T) = cc[(i*q-q+1):(i*q)]
   err[,,i] = tcrossprod(L)
 }
 
@@ -151,7 +162,7 @@ points(s3, col="red")
 
 
 tmp = proc.time()
-my.result3 = ME.VVV.err(samp, z.ini, err)
+my.result3 = ME.VVV.err(samp, z.ini, err, errstr="no")
 my.class3 = my.result$z
 my.mcr3 = MCR(my.class,z.true)
 my.time3 = proc.time() - tmp

@@ -3,7 +3,20 @@
 
 ### manual EM algorithm for VVV with estimation error
 
-ME.VVV.err = function(data, z, err){
+ME.VVV.err = function(data, z, err, errstr){
+  # Argument "errstr" is user-specified error structure.
+  # If errstr="identical", all errors are the same.
+  # If errstr="cluster", errors are the same within each cluster.
+  # If errstr="no", no constraints on error structure.
+  
+  #source("~/R functions for VVV, with errors/E-step_VVV_error.R")
+  #source("~/R functions for VVV, with errors/M-step_VVV_error.R")
+  #source("~/R functions for VVV, with errors/log likelihood_VVV_error.R")
+  #source("~/R functions for VVV, with errors/objective function_VVV_error.R")
+  #source("~/R functions for VVV, with errors/W_k matrix.R")
+  #source("~/R functions for VVV, with errors/inipar.R")
+  #source("~/R functions for VVV, with errors/misclassification rate.R")
+
   
   n = nrow(data)
   p = ncol(data)
@@ -18,15 +31,24 @@ ME.VVV.err = function(data, z, err){
   zhat = matrix(0,n,G)
 
   llike = rep(0, 10000) # set convergence criterion
-  llike[2] = 1e-5
+  llike[2] = 1e-4
  
-  tol = 1e-7
+  tol = 1e-5
   # while loop for iteration:
   while(abs(llike[k]-llike[k-1]) > tol){
     
     print(paste("iteration =",k-1)) # prints number of iterations
-  
-    thetahat = MstepVVV.err(z, data, err) # M-step
+    
+     # initial values for M-step
+    if(errstr=="identical"){
+      ini.par = ini.par.iderr(data, z, err)
+    } else if(errstr=="cluster"){
+      ini.par = ini.par.clust(data, z, err)
+    } else if(errstr=="no"){
+      ini.par = ini.par.no(data, z)
+    }
+      
+    thetahat = MstepVVV.err(z, data, err, ini.par) # M-step
     
     temp = EstepVVV.err(thetahat, data, err) # E-step
   
@@ -35,9 +57,7 @@ ME.VVV.err = function(data, z, err){
     parameters = temp[[2]] # parameter estimates
     
     loglikelihood = temp[[3]] # records log likelihood
-    
-    parsigma = temp[[4]]
-      
+          
     z = zhat # update membership matrix
     
     llike[k+1] = loglikelihood # update log likelihood of complete data
@@ -49,7 +69,7 @@ ME.VVV.err = function(data, z, err){
   
   # edit output so it's basically consistent with meVVV() from MCLUST:
   out = list(modelname="VVV with est error", n=n, d=p, G=G, z=zhat,
-    parameters=parameters, loglik=loglikelihood, iteration=k-1)
+    parameters=parameters, loglik=loglikelihood, iteration=k-2)
   
   return(out)
   

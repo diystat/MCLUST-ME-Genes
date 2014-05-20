@@ -5,7 +5,7 @@ library(mclust)
 library(MASS)
 
 # set sample size
-nvec = c(3,3,4) * 10
+nvec = c(3,3,4) * 2
 n = sum(nvec)
 p = 2
 
@@ -46,8 +46,6 @@ points(s3, col="red")
 
 z.ini = z.true
 
-library(gdata)
-library(mclust)
 
 my.result = ME.VVV.err(samp, z.ini, err)
 

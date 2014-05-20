@@ -9,7 +9,8 @@ wkmat = function(z, data){
   
   clustcount = colSums(z) + .Machine$double.xmin # prevent a/0 situation
   
-  muhat = matrix(rep(0,p*G),nrow=p)
+  m = p*G
+  muhat = matrix(rep(0,m),nrow=p)
     for(k in 1:G){
       muhat[,k] = colSums(data*z[,k])/clustcount[k]
     }
