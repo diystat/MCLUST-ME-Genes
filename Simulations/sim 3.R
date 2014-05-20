@@ -1,4 +1,5 @@
 
+par(mfrow=c(3,1))
 ### Simulation 3: varying error structures
 
 library(MASS)
@@ -48,22 +49,22 @@ x2 = max(samp[,1])+2
 y1 = min(samp[,2])-2
 y2 = max(samp[,2])+2
 
-plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
-points(s2, col="blue")
-points(s3, col="red")
+plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="",main="Scenario 1")
+points(s2, col="blue", pch=3)
+points(s3, col="red", pch=18)
 
 
 
 tmp = proc.time()
-my.result1 = ME.VVV.err(samp, my.class, err, errstr="identical")
+my.result1 = ME.VVV.err(samp, z.ini, err, errstr="identical")
 my.class1 = my.result1$z
-my.mcr1 = MCR(my.class,z.true)
+my.mcr1 = MCR(my.class1,z.true)
 my.time1 = proc.time() - tmp
 
 tmp = proc.time()
-mc.result1 = meVVV(samp,mc.class)
+mc.result1 = meVVV(samp,z.ini)
 mc.class1 = mc.result1$z
-mc.mcr1 = MCR(mc.class,z.true)
+mc.mcr1 = MCR(mc.class1,z.true)
 mc.time1 = proc.time() - tmp
 
 
@@ -106,20 +107,20 @@ x2 = max(samp[,1])+2
 y1 = min(samp[,2])-2
 y2 = max(samp[,2])+2
 
-plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
-points(s2, col="blue")
-points(s3, col="red")
+plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="",main="Scenario 2")
+points(s2, col="blue", pch=3)
+points(s3, col="red", pch=18)
 
 tmp = proc.time()
 my.result2 = ME.VVV.err(samp, z.ini, err, "cluster")
-my.class2 = my.result$z
-my.mcr2 = MCR(my.class,z.true)
+my.class2 = my.result2$z
+my.mcr2 = MCR(my.class2,z.true)
 my.time2 = proc.time() - tmp
 
 tmp = proc.time()
 mc.result2 = meVVV(samp,z.ini)
-mc.class2 = mc.result$z
-mc.mcr2 = MCR(mc.class,z.true)
+mc.class2 = mc.result2$z
+mc.mcr2 = MCR(mc.class2,z.true)
 mc.time2 = proc.time() - tmp
 
 
@@ -155,22 +156,26 @@ for(i in (n-nvec[3]):n){
   samp[i,] = mvrnorm(1, mu3, (sigma3+err[,,i]))
 }
 
+x1 = min(samp[,1])-2
+x2 = max(samp[,1])+2
+y1 = min(samp[,2])-2
+y2 = max(samp[,2])+2
 
-plot(s1,xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="")
-points(s2, col="blue")
-points(s3, col="red")
+plot(samp[1:nvec[1],],xlim=c(x1,x2),ylim=c(y1,y2),xlab="",ylab="",main="Scenario 3")
+points(samp[(nvec[1]+1):(n-nvec[3]),], col="blue", pch=3)
+points(samp[(n-nvec[3]+1):n,], col="red", pch=18)
 
 
 tmp = proc.time()
 my.result3 = ME.VVV.err(samp, z.ini, err, errstr="no")
-my.class3 = my.result$z
-my.mcr3 = MCR(my.class,z.true)
+my.class3 = my.result3$z
+my.mcr3 = MCR(my.class3,z.true)
 my.time3 = proc.time() - tmp
 
 tmp = proc.time()
 mc.result3 = meVVV(samp,z.ini)
-mc.class3 = mc.result$z
-mc.mcr3 = MCR(mc.class,z.true)
+mc.class3 = mc.result3$z
+mc.mcr3 = MCR(mc.class3,z.true)
 mc.time3 = proc.time() - tmp
 
 save(my.result1,my.class1,my.mcr1,my.time1,
