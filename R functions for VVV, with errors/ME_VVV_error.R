@@ -30,12 +30,13 @@ ME.VVV.err = function(data, z, err, errstr){
   parameters = list()
   zhat = matrix(0,n,G)
 
-  llike = rep(0, 10000) # set convergence criterion
-  llike[2] = 1e-4
+  llike = rep(0, 1000) # set convergence criterion
+  llike[1] = -10000
+  llike[2] = llike[1] + 1e-4
  
   tol = 1e-5
   # while loop for iteration:
-  while(abs(llike[k]-llike[k-1]) > tol){
+  while(llike[k]-llike[k-1] > tol){
     
     print(paste("iteration =",k-1)) # prints number of iterations
     
@@ -67,9 +68,11 @@ ME.VVV.err = function(data, z, err, errstr){
     k = k+1 # increment k
   }
   
+  error = llike[k]-llike[k-1]
+  
   # edit output so it's basically consistent with meVVV() from MCLUST:
   out = list(modelname="VVV with est error", n=n, d=p, G=G, z=zhat,
-    parameters=parameters, loglik=loglikelihood, iteration=k-2)
+    parameters=parameters, loglik=loglikelihood, iteration=k-2, error=error, likvec=llike[1:k][-(1:2)])
   
   return(out)
   
