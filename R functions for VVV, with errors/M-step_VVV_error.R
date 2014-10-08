@@ -26,7 +26,7 @@ MstepVVV.err = function(z, data, err, ini.par){
     }
   
     
-  ## find arg max for objective functin w.r.t. the covariance matrix
+  ## find arg max for objective function w.r.t. the covariance matrix
    param.est = optim(par=ini.par, obj.fun.VVV.err, gr=NULL, z=z, data=data, err=err,
      lower=lower, method="L-BFGS-B")$par
   # param.est = optim(par=ini.par, obj.fun.VVV.err, z=z, data=data, err=err)$par # used Nelder-Mead instead

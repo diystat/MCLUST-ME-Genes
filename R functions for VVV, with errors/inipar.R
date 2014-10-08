@@ -52,7 +52,7 @@ ini.par.no = function(data, z){
   G = ncol(z)
   
   ini.mat = matrix(0, p, p)
-  diag(ini.mat) = 1
+  diag(ini.mat) = 0.5
   ini.par = rep(lowerTriangle(ini.mat, diag=TRUE), G)
   
   return(ini.par)

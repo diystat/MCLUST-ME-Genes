@@ -5,7 +5,7 @@ library(MASS)
 ## simulate well-separated clusters, with correct membership as initial membership matrix:  
 sim = function(s){
   # set sample size
-  nvec = c(3,3,4) * 5
+  nvec = c(3,3,4) * 2
   n = sum(nvec)
   p = 2
   
@@ -17,7 +17,7 @@ sim = function(s){
   err = array(0, dim=c(p,p,n))  
   for(i in 1:n){
     err[,,i] = matrix(0,p,p)
-    diag(err[,,i]) = 0
+    diag(err[,,i]) = 0.2
   }
   
   sigma1 = matrix(c(1,0,0,1),nrow=2)
@@ -34,14 +34,14 @@ sim = function(s){
   
   samp = rbind(s1,s2,s3)
   
-  plot(s1,xlim=c(-4,4),ylim=c(-4,4))
+  plot(s1,xlim=c(-12,12),ylim=c(-12,12))
   points(s2, col="blue")
   points(s3, col="red")
   
   z.ini = z.true
   
   ptm1 = proc.time()
-  my.result = ME.VVV.err(samp, z.ini, err)
+  my.result = ME.VVV.err(samp, z.ini, err, errstr="identical")
   proc.time() - ptm1
   
   meVVV(samp,z.ini)

@@ -1,21 +1,21 @@
 
 
-
+setwd("Users/wzhang/MS final project/R functions for VVV, with errors")
 ### manual EM algorithm for VVV with estimation error
 
 ME.VVV.err = function(data, z, err, errstr){
   # Argument "errstr" is user-specified error structure.
   # If errstr="identical", all errors are the same.
   # If errstr="cluster", errors are the same within each cluster.
-  # If errstr="no", no constraints on error structure.
+  # If errstr="none", no constraints on error structure.
   
-  #source("~/R functions for VVV, with errors/E-step_VVV_error.R")
-  #source("~/R functions for VVV, with errors/M-step_VVV_error.R")
-  #source("~/R functions for VVV, with errors/log likelihood_VVV_error.R")
-  #source("~/R functions for VVV, with errors/objective function_VVV_error.R")
-  #source("~/R functions for VVV, with errors/W_k matrix.R")
-  #source("~/R functions for VVV, with errors/inipar.R")
-  #source("~/R functions for VVV, with errors/misclassification rate.R")
+  source("E-step_VVV_error.R")
+  source("M-step_VVV_error.R")
+  source("log likelihood_VVV_error.R")
+  source("objective function_VVV_error.R")
+  source("W_k matrix.R")
+  source("inipar.R")
+  source("misclassification rate.R")
 
   
   n = nrow(data)
@@ -45,7 +45,7 @@ ME.VVV.err = function(data, z, err, errstr){
       ini.par = ini.par.iderr(data, z, err)
     } else if(errstr=="cluster"){
       ini.par = ini.par.clust(data, z, err)
-    } else if(errstr=="no"){
+    } else if(errstr=="none"){
       ini.par = ini.par.no(data, z)
     }
       
@@ -61,9 +61,9 @@ ME.VVV.err = function(data, z, err, errstr){
           
     z = zhat # update membership matrix
     
-    llike[k+1] = loglikelihood # update log likelihood of complete data
+    llike[k+1] = loglikelihood # update log likelihood of observed data
     
-    print(loglikelihood) # prints current evaulated complete data log-likelihood
+    print(loglikelihood) # prints current evaulated observed data log-likelihood
       
     k = k+1 # increment k
   }

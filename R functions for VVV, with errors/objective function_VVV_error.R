@@ -6,7 +6,7 @@ obj.fun.VVV.err =  function(param,z,data,err){
   ### Input:
   ### param --- vector of elements in lower triangular matrix of length Gp(p+1)/2 
   ### z --- matrix of membership probabilities. dimension = n*G. z[i,k]=P(obs. i is in cluster k)
-  ### data --- matrix of data. dimension = n*d
+  ### data --- matrix of data. dimension = n*p
   ### err --- array of estimation error matrices, of dimension (p, p, n), one for each observation
   
     n=nrow(data)
