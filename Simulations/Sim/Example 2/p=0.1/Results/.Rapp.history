@@ -1,0 +1,142 @@
+xtr <- matrix(rnorm(100*100),ncol=100);#
+xte <- matrix(rnorm(100000*100),ncol=100);#
+beta <- c(rep(1,10),rep(0,90));#
+ytr <- xtr%*%beta + rnorm(100);#
+yte <- xte%*%beta + rnorm(100000);#
+rsq <- trainerr <- testerr <- NULL;#
+#
+for(i in 2:100){#
+  mod <- lm(ytr~xtr[,1:i])#
+  rsq <- c(rsq,summary(mod)$r.squared)#
+  beta <- mod$coef[-1]#
+  intercept <- mod$coef[1]#
+  trainerr <- c(trainerr, mean((xtr[,1:i]%*%beta+intercept - ytr)^2))#
+  testerr <- c(testerr, mean((xte[,1:i]%*%beta+intercept - yte)^2))#
+}#
+#
+par(mfrow=c(1,3));#
+#
+plot(2:100,rsq, xlab="Number of Variables", ylab="R Squared", log="y");#
+#
+abline(v=10,col="red");#
+#
+plot(2:100,trainerr, xlab="Number of Variables", ylab="Training Error",log="y");#
+#
+abline(v=10,col="red");#
+#
+plot(2:100,testerr, xlab="Number of Variables", ylab="Test Error",log="y");#
+#
+abline(v=10,col="red")#
+#
+par(mfrow=c(1,1))
+?daisy
+install.packages("cluster")
+?daisy
+library(cluster)
+?daisy
+?qt
+qt(0.975,7)
+qt(0.995,7)
+###################################################################################### # PART 1 ##############################################################################
+# Read in data unlogged = c(22,18,22,20,15,21,13,13,19,13,15,14,19,20,21,24,21,18,14) logged = c(17,4,18,14,18,15,14,11,13,16,11,10,8,9,17)
+#### Obtain a side by side box plot boxplot(logged,unlogged, main = "Number of tree species per rain forest plot in Borneo:          Logged vs Unlogged ", col = "purple")
+?pnorm
+?pnorm(2.5,2.7,0.2)
+pnorm(2.5,2.7,0.2)
+pnorm(3,2.7,0.2)
+0.933-0.159
+CurtBinomial(20, 4, p = seq(0.5, 0.9, 0.01), Plots = TRUE)
+library(Dodge)
+CurtBinomial(20, 4, p = seq(0.5, 0.9, 0.01), Plots = TRUE)
+library(MASS)#
+#
+mu1 = c(-3,0)#
+  mu2 = c(3,0)#
+  sig1 = matrix(c(4,0,0,4),nrow=2)#
+  sig2 = matrix(c(4,0,0,4),nrow=2)#
+#
+errmat = array(0,dim=c(2,2,50))#
+  E = matrix(c(2,0,0,2),nrow=2)#
+  for(i in 1:25){#
+    errmat[,,i] = E#
+  }#
+#
+N = 50#
+U = runif(N)#
+rand.samples = matrix(0,N,2)#
+#
+for(i in 1:N){#
+  if(U[i]<0.5){#
+    rand.samples[i,] = mvrnorm(1,mu1,(sig1+errmat[,,i]))#
+  } else{#
+    rand.samples[i,] = mvrnorm(1,mu2,(sig2+errmat[,,i]))#
+  }#
+}#
+#
+xx = rand.samples[,1]#
+yy = rand.samples[,2]#
+#
+plot(rand.samples)
+mu1 = c(-9,0)#
+  mu2 = c(9,0)#
+  sig1 = matrix(c(36,0,0,36),nrow=2)#
+  sig2 = matrix(c(4,0,0,4),nrow=2)#
+#
+errmat = array(0,dim=c(2,2,50))#
+  E = matrix(c(16,0,0,16),nrow=2)#
+  for(i in 1:25){#
+    errmat[,,i] = E#
+  }#
+#
+N = 200#
+U = runif(N)#
+rand.samples = matrix(0,N,2)#
+#
+for(i in 1:N){#
+  if(U[i]<0.5){#
+    rand.samples[i,] = mvrnorm(1,mu1,(sig1+errmat[,,i]))#
+  } else{#
+    rand.samples[i,] = mvrnorm(1,mu2,(sig2+errmat[,,i]))#
+  }#
+}#
+#
+xx = rand.samples[,1]#
+yy = rand.samples[,2]#
+#
+plot(rand.samples)
+mu1 = c(-9,0)#
+  mu2 = c(9,0)#
+  sig1 = matrix(c(36,0,0,36),nrow=2)#
+  sig2 = matrix(c(4,0,0,4),nrow=2)#
+#
+errmat = array(0,dim=c(2,2,N))#
+  E = matrix(c(16,0,0,16),nrow=2)#
+  for(i in 1:N/2){#
+    errmat[,,i] = E#
+  }#
+#
+N = 200#
+U = runif(N)#
+rand.samples = matrix(0,N,2)#
+#
+for(i in 1:N){#
+  if(U[i]<0.5){#
+    rand.samples[i,] = mvrnorm(1,mu1,(sig1+errmat[,,i]))#
+  } else{#
+    rand.samples[i,] = mvrnorm(1,mu2,(sig2+errmat[,,i]))#
+  }#
+}#
+#
+xx = rand.samples[,1]#
+yy = rand.samples[,2]#
+#
+plot(rand.samples)
+load("res.RData")
+names(out)
+out$rand.avg
+load("res.RData")
+out$rand.avg
+load("res.RData")
+out$rand.avg
+load("res.RData")
+out$rand.avg
