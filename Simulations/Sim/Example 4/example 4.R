@@ -1,3 +1,6 @@
+library(gdata)
+library(phyclust)
+
 N = 200
 tau = 0.5
 mu1 = c(0,0)
@@ -5,15 +8,12 @@ mu2 = c(8,0)
 sig1 = matrix(c(64,0,0,64),nrow=2)
 sig2 = matrix(c(16,0,0,16),nrow=2)
 k = 36
-p = 0.3
+p = 0.5
 nseed = 100
 
 check.seed(N,tau,mu1,mu2,sig1,sig2,k,p)
 
 setwd("~/Research Project/R functions for MCME(VVV)/Core functions")
-
-library(gdata)
-library(phyclust)
 
 ptm <- proc.time()
 sim.driver(N,tau,mu1,mu2,sig1,sig2,k,p,nseed)
@@ -22,7 +22,7 @@ proc.time() - ptm
 
 
 
-
+# Read simulation results
 setwd("/Users/wzhang/Research Project/Simulations/Sim/Example 4/p=0.1/Results")
 load("res.RData")
 rr = out$rand.raw
@@ -70,21 +70,96 @@ rand.mevvv = c(r1.mevvv,r3.mevvv,r5.mevvv,r7.mevvv,r9.mevvv)
 frand.mcme = c(fr1.mcme,fr3.mcme,fr5.mcme,fr7.mcme,fr9.mcme)
 frand.mevvv = c(fr1.mevvv,fr3.mevvv,fr5.mevvv,fr7.mevvv,fr9.mevvv)
 
-group = c(rep(1,100),rep(3,100),rep(5,100),rep(7,100),rep(9,100))
+group = c(rep(0.1,100),rep(0.3,100),rep(0.5,100),rep(0.7,100),rep(0.9,100))
 
-boxplot(rand.mcme~group)
-boxplot(rand.mevvv~group)
-boxplot(frand.mcme~group)
-boxplot(frand.mevvv~group)
+# Individual Rand/Fuzzy Rand indices
+par(mfrow=c(2,2))
+boxplot(rand.mcme~group,main="Rand, MCLUST-ME",xlab="proportion of obs with errors")
+boxplot(rand.mevvv~group,main="Rand, MCLUST",xlab="proportion of obs with errors")
+boxplot(frand.mcme~group,main="Fuzzy Rand, MCLUST-ME",xlab="proportion of obs with errors")
+boxplot(frand.mevvv~group,main="Fuzzy Rand, MCLUST",xlab="proportion of obs with errors")
+par(mfrow=c(1,1))
 
+
+# Pairwise difference for all p
 rand.diff = rand.mcme - rand.mevvv
 frand.diff = frand.mcme - frand.mevvv
+par(mfrow=c(1,2))
+boxplot(rand.diff~group,main="Rand index",xlab="proportion of obs with errors")
+abline(0,0,lty="dashed")
+boxplot(frand.diff~group,main="Rand index",xlab="proportion of obs with errors")
+abline(0,0,lty="dashed")
+par(mfrow=c(1,1))
 
-boxplot(rand.diff~group)
+
+# Pairwise comparison for p=0.5
+plot(r5.mevvv,r5.mcme-r5.mevvv)
 abline(0,0,lty="dashed")
 
-boxplot(frand.diff~group)
+plot(fr5.mevvv,fr5.mcme-fr5.mevvv)
 abline(0,0,lty="dashed")
+
+
+
+## Examine clustering uncertainties
+plot.uncr = function(seed){
+  setwd("/Users/wzhang/Research Project/Simulations/Sim/Example 4/p=0.5/Results")
+  load("res.RData")
+
+  # Extract clustering result for seed="seed"
+  ivec = rep((seed-1)*7,7)+(1:7)
+
+  res.mcme = out$sim.result[[ivec[1]]]
+  res.mevvv = out$sim.result[[ivec[2]]]
+  z.ini = out$sim.result[[ivec[3]]]
+  rand.samples = out$sim.result[[ivec[4]]]
+  errmat = out$sim.result[[ivec[5]]]
+  index = out$sim.result[[ivec[6]]]
+  k = out$sim.result[[ivec[7]]]
+  simrun = list(res.mcme=res.mcme,res.mevvv=res.mevvv,errmat=errmat,z.ini=z.ini,rand.samples=rand.samples,index=index,k=k)
+
+  mcme7 = res.mcme
+  mclust7 = res.mevvv
+  unc.mcme = mcme7$uncertainty
+  unc.mclust = numeric(200)
+  for(i in 1:200){
+    unc.mclust[i] = 1-max(mclust7$z[i,])
+  }
+
+  # Ratio of uncertainties
+  uncr = log((unc.mcme+0.001)/(unc.mclust+0.001))
+
+  # Compare ratio with measurement error
+  # fr.new = data.frame(ratio=uncr,index=simdata$index)
+  # boxplot(ratio~index,data=fr.new)
+
+  #point.size = numeric(200)
+  #for(i in 1:200){
+  #  if(uncr[i]>log(2)){
+  #    point.size[i] = 3
+  #  }else if(uncr[i]<log(1/2)){
+  #    point.size[i] = 0.7
+  #  }else{
+  #    point.size[i] = 1.3
+  #  }
+  #}
+  
+  point.size = 0.3+unc.mcme*4
+  point.size.mclust = 0.3+unc.mclust*4
+
+  #plot.boundary(simrun,7)
+  plot.boundary.new(simrun,point.size,point.size.mclust)
+}
+
+
+# seed=7
+setwd("/Users/wzhang/Research Project/Simulations/Sim/Example 4/p=0.5/Results")
+load("res.RData")
+out$seed
+
+par(mfrow=c(1,2))
+plot.uncr(4)
+par(mfrow=c(1,1))
 
 
 

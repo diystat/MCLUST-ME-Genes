@@ -62,6 +62,7 @@ mcmeVVV = function(data, z, err, d=1, itmax=Inf, lb=1e-3){
     delta = abs(llike[k-1]-llike[k])/(1+abs(llike[k]))
     
     it = k-2
+    print(paste("iteration=",it,sep=""))
     
     if(delta<tol || it>=itmax) break;
   }
@@ -74,7 +75,7 @@ mcmeVVV = function(data, z, err, d=1, itmax=Inf, lb=1e-3){
     uncertainty[i] = 1-rowmax
   }
   
-  nu = G*p*(p+1)/2 + G*p
+  nu = G*p*(p+1)/2 + G*p + (G-1)
   bic.me = 2*loglikelihood - nu*log(n) # Calculates BIC for the model
   
   # edit output so it's basically consistent with meVVV() from MCLUST:

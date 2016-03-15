@@ -22,16 +22,15 @@ sim.data = function(simpar){
   }
  
   ## Generate sample from mixture distribution:
-  require(MASS)
   U = runif(N)
   z.ini = matrix(0,N,2)
   rand.samples = matrix(0,N,2)
   for(i in 1:N){
     if(U[i]<tau){
-      rand.samples[i,] = mvrnorm(1,mu1,(sig1+errmat[,,i]))
+      rand.samples[i,] = MASS::mvrnorm(1,mu1,(sig1+errmat[,,i]))
       z.ini[i,] = c(1,0)
     } else{
-      rand.samples[i,] = mvrnorm(1,mu2,(sig2+errmat[,,i]))
+      rand.samples[i,] = MASS::mvrnorm(1,mu2,(sig2+errmat[,,i]))
       z.ini[i,] = c(0,1)
     }
   }
@@ -54,8 +53,7 @@ sim.run = function(simdata){
   res.mcme = mcmeVVV(rand.samples, z.ini, errmat)
   
   ## Run mevvv:
-  require(mclust)
-  res.mevvv = meVVV(rand.samples,z.ini)
+  res.mevvv = mclust::meVVV(rand.samples,z.ini)
   
   out = list(res.mcme=res.mcme, res.mevvv=res.mevvv, z.ini=z.ini, rand.samples=rand.samples, errmat=errmat, index=index, k=k)
   return(out)

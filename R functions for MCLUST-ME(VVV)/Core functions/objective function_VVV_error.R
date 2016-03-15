@@ -33,9 +33,6 @@ obj.fun.VVV.err =  function(param,z,data,err){
         cov.mat[,,k] = tcrossprod(L[,,k])
       }
   
-    #print(cov.mat[,,1]);
-    #print(cov.mat[,,2]);
-  
   ### After rewritting the log-likelihood for complete data, the objective function
   ### becomes:
   ###    F(Sigma) = sum_i sum_k z_ik*t(x_i-muhat_k)*(Sigma_k+Sigma_i)^(-1)*(x_i-muhat_k) + sum_i sum_k z_ik*log(det(Sigma_k+Sigma_i))

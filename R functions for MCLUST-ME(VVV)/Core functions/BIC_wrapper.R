@@ -15,6 +15,8 @@ nc.select = function(data, err, nc=1:5, d=1, itmax=Inf, lb=1e-3){
   res = list()
   
   while(G <= Gmax){
+    print(paste("Components = ", G, sep=""))
+    
     # Generate initial membership matrix with hierarchical agglomeration
     cl = mclust::hclass(hcTree, G)
     z.ini = matrix(0,N,G)
@@ -35,19 +37,21 @@ nc.select = function(data, err, nc=1:5, d=1, itmax=Inf, lb=1e-3){
   
   ## Allow user to view results of the optimal model chosen
   n.opt = which(bic.vec==max(bic.vec))
-  res.opt = res[n.opt]
+  l = 14*n.opt - 13
+  u = 14*n.opt
+  res.opt = res[l:u]
   
   ## Output BIC values for each choice of number of clusters
   tbl = cbind(nc,bic.vec)
 
-  out = list(G=nc[n.opt], bic=max(bic.vec), result=res.opt, BIC=tbl,
-    nc=nc, bicvec=bic.vec)
+  out = list(G=nc[n.opt], bic=max(bic.vec), res.opt=res.opt, BIC=tbl,
+    nc=nc, bicvec=bic.vec, res=res)
   return(out)
 }  
  
 
 ## Plot BIC for each choice of number of clusters
-plotbic = function(nc.result){
+plotbic = function(nc.result,title){
   nc = nc.result$nc
   bic.vec = nc.result$bicvec
   
@@ -56,9 +60,9 @@ plotbic = function(nc.result){
   yrange = range(bic.vec)
   # set up the plot
   plot(xrange, yrange, type="n", xlab="number of components",
-     ylab="BIC", xaxt="n", main="BIC, larger is better")
+     ylab="BIC", xaxt="n", main=title)
   # add lines
-  lines(nc, bic.vec, type="b", lwd=1.5)
+  lines(nc, bic.vec, type="b", lwd=1.5, col="red")
   axis(1, at=nc)
 }  
   
