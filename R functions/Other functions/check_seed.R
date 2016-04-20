@@ -1,5 +1,5 @@
 
-## Check if meVVV has singularity issue for any of the random seeds
+## Check if mcmeVVV has singularity issue for any of the random seeds
 check.seed = function(N,tau,mu1,mu2,sig1,sig2,k,p){
   seedvec = seq(1,200,1)
   for(i in 1:200){
@@ -14,4 +14,3 @@ check.seed = function(N,tau,mu1,mu2,sig1,sig2,k,p){
     res = meVVV(rand.samples,z.ini)
   }
 }
-

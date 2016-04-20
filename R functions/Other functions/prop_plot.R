@@ -26,28 +26,3 @@ prop.plot = function(tau,seed=4){
     col=ifelse(rs.new[,4]==1,col.blue,"red"),xlab="",ylab="",xlim=c(xlow,xup),ylim=c(ylow,yup))
 }
 
-
-
-par(mfrow=c(2,3))
-prop = c(0.1,0.3,0.5,0.7,0.9)
-lapply(prop,prop.plot)
-par(mfrow=c(1,1))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
