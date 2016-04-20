@@ -1,6 +1,4 @@
 
-
-
 ### implementation of fuzzy rand index described in Campello(2006)
 wtdfuzzyrand = function(alpha,R,Q,tnorm="min",err){
   
@@ -92,7 +90,6 @@ wtdfuzzyrand = function(alpha,R,Q,tnorm="min",err){
   
   ## calculate fuzzy rand index:
   out = (a+d)/(a+b+c+d)
-  
   return(out)
 }
 
@@ -101,7 +98,7 @@ wtdfuzzyrand = function(alpha,R,Q,tnorm="min",err){
 
 
 
-
+# Creates animated GIF file for stepwise EM algorithm
 uncstep = function(data,my.result,filename){
   n = nrow(data)
   palette = c("magenta",heat.colors(10)[2:8],heat.colors(10)[10],"floralwhite")
@@ -143,7 +140,6 @@ uncstep = function(data,my.result,filename){
     rect(xl,yb,xr,yt,col=rev(palette),border=NA)
     axis(3,at=seq(1,0,-0.1))
 
-    
     ani.pause()
   }}, movie.name=paste(filename,".gif"), ani.width=1200, ani.height=600)
 }  
@@ -206,14 +202,12 @@ uncmap = function(data,unc,filename){
 
 unc = function(z){
   ## Input argument: z---membership matrix
-  
   n = nrow(z)
   uncertainty = numeric() # records classification uncertainty of each obs.
   for(i in 1:n){
     rowmax = max(z[i,])
     uncertainty[i] = 1-rowmax
   }
-  
   return(uncertainty)
 }
 
@@ -221,10 +215,8 @@ unc = function(z){
 
 
 
-
-  ## Plot stepwise clustering
-  ## Current function only works on two target clusters.
-
+## Plot stepwise clustering
+## Current function only works on two target clusters.
 plot.step = function(dat1, dat2, mu1, mu2, z.ini, errmat, itmax, filename){
   # Arguments: mevvv---clustering result object from stepwiseME()
   #            mcme---clustering result object from mcmeVVV()
@@ -289,8 +281,6 @@ plot.step = function(dat1, dat2, mu1, mu2, z.ini, errmat, itmax, filename){
   
   cenary.mevvv[,,1] = cenary.mcme[,,1] = cbind(mu1,mu2)
 
-
-  
   # Make an animation:
   library("animation")
   oopt <- ani.options(interval = 3) # set time between frames
@@ -368,51 +358,29 @@ stepwiseME = function(data, z, itmax=Inf){
   tol = 1e-5
   # while loop for iteration:
   repeat {
-    
-    #print(paste("iteration =",k-1)) # prints number of iterations
-    
     thetahat = mstepVVV(data, z)$parameters # M-step
-    
     temp = estepVVV(data, thetahat) # E-step
-  
     zhat = temp$z # membership estimates
-    
     muhat = temp$parameters$mean # mean estimates
-    
     parameters = temp$parameters
-    
     loglikelihood = temp$loglik # records log likelihood
-          
     z = zhat # update membership matrix
-    
     member = rbind(member,zhat) # store membership estimates
-    
     center = rbind(center,muhat) # store mean estimates
-    
     llike[k+1] = loglikelihood # update log likelihood of observed data
-    
     errvec = c(errvec,llike[k]-llike[k-1])
-    
-    #print(loglikelihood) # prints current evaulated observed data log-likelihood
-      
     k = k+1 # increment k
-    
     it = it+1
-    
     err = abs(llike[k-1]-llike[k])/(1+abs(llike[k]))
-    
     if(err<tol) break;
   }
-  
   error = llike[k]-llike[k-1]
   
   # edit output so it's basically consistent with meVVV() from MCLUST:
   out = list(modelname="VVV with est error", n=n, d=p, G=G, z=zhat, member=member, center=center,
     parameters=parameters, loglik=loglikelihood, iteration=k-2, error=error, likvec=llike[1:k][-(1:2)],
     errvec=errvec)
-  
   return(out)
-  
 }
 
 
@@ -501,6 +469,8 @@ sim.par = function(N,tau,mu1,mu2,sig1,sig2,k,p){
 }
 
 
+
+
 ## Generate data using given parameters
 sim.data = function(simpar){  
   N = simpar$N; tau = simpar$tau
@@ -532,8 +502,9 @@ sim.data = function(simpar){
 
   out = list(data=rand.samples, z.ini=z.ini, err=errmat, index=index, k=k)
   return(out)
-  
 }
+
+
 
 
 ## Obtain results from MCME and meVVV
@@ -599,7 +570,6 @@ sim.data3 = function(simpar){
 
   out = list(data=rand.samples, z.ini=z.ini, err=errmat, index=index, k=k)
   return(out)
-  
 }
 
 
@@ -633,7 +603,6 @@ meVVV.fc = function(data, z,itmax=Inf, mu1, mu2){
   center = matrix(0,p,G) # matrix for storing mean estimates
 
   k = 2 # keeps track of number of iteration
-
   piconst = n*p*log(2*pi)/2
   
   loglikelihood = NA
@@ -646,43 +615,28 @@ meVVV.fc = function(data, z,itmax=Inf, mu1, mu2){
   llike[2] = FLMAX
  
   tol = 1e-5
-  
   mu.fix = cbind(mu1,mu2)
-  
-  
+
   # while loop for iteration:
   repeat{
-    
     print(paste("iteration =",k-1)) # prints number of iterations
-      
     thetahat = mstepVVV(data, z) # M-step
     thetahat$parameters$mean = mu.fix
-    
     temp = estepVVV(data, thetahat$parameters) # E-step
-  
     zhat = temp$z # membership estimates
-    
     parameters = temp$parameters # parameter estimates
-    
     loglikelihood = temp$loglik # records log likelihood
-          
     z = zhat # update membership matrix
-          
     k = k+1 # increment k
-    
     delta = abs(llike[k-1]-llike[k])/(1+abs(llike[k]))
-    
     it = k-2
-    
     if(delta<tol || it>=itmax) break;
   }
-  
   error = llike[k]-llike[k-1]
   
   # edit output so it's basically consistent with meVVV() from MCLUST:
   out = list(modelname="VVV", n=n, d=p, G=G, z=zhat, parameters=parameters,
     loglik=loglikelihood, iteration=k-2, error=error)
-  
   return(out)
 }
 
@@ -931,7 +885,7 @@ sim.driver = function(N,tau,mu1,mu2,sig1,sig2,k,p,nseed){
   source('~/Research Project/Simulations/Sim/Functions/boundary.R')
   
   simres = list()
-  randres = matrix(,nrow=nseed,ncol=8)
+  randres = matrix(0,nrow=nseed,ncol=8)
   
   v = seq(1,2*nseed,by=1)
   seedvec = sample(v,size=nseed)
