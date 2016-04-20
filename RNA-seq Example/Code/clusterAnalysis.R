@@ -1,4 +1,6 @@
-setwd("~/Research Project/RNA-seq data")
+
+# Import raw data
+setwd("~/Research Project/RNA-seq Example/Data")
 rm(list=ls())
 dd = "2015-11-06"
 file.out = sprintf("%s.Coaker.Rdata", dd)
@@ -8,13 +10,15 @@ obs = full$beta[top, 1:5]
 errary = v.beta[,,top]
 betasd = sd.beta[top,]
 
+# Export processed data
 save(obs,errary,file="RNASeq.RData")
 
-setwd("../R functions for MCLUST-ME(VVV)/Core functions")
+# Source MCLUST-ME functions 
+setwd("../R functions/Core functions")
 source(file="all functions.R")
 
-### Use entire dataset ###
 
+###--------------------- Clustering -----------------------###
 # Group data with mclust first:
 library(mclust)
 res.mclust = Mclust(obs,modelNames="VVV")
@@ -58,14 +62,16 @@ b[5] = run5$BIC
 b[6] = run6$BIC
 b[7] = run7$BIC
 b[8] = run8$BIC
-setwd("~/Research Project/RNA-seq data/Results/BIC")
+setwd("~/Research Project/RNA-seq Example/Results/BIC")
 save(b,file="rnaseq_bic.RData")
 
-setwd("~/Research Project/RNA-seq data/Results/BIC")
+setwd("~/Research Project/RNA-seq Example/Results/BIC")
 load("rnaseq_bic.RData")
 a = res.mclust$BIC[1:8]
 ylow = min(c(a,b))
 yup = max(c(a,b))
+
+# Plot BIC values of both methods
 plot(1:8,b,type="b",lwd=2,xlab="Number of components",ylab="BIC",pch=0,
   ylim=c(ylow,yup))
 lines(1:8,a,type="b",lwd=2,pch=1,lty=2)
@@ -80,9 +86,10 @@ save(res.mcme.full,file="realDataClusterResult.RData")
 
 
 
-###------ Analysis -----###
 
-setwd("~/Research Project/RNA-seq data/Results")
+###----------------- Analysis ------------------###
+
+setwd("~/Research Project/RNA-seq Example/Results")
 load("realDataClusterResult.RData")
 
 ## Obtain mean and covariance estimates
@@ -217,8 +224,6 @@ par(mfrow=c(1,1))
 
 
 
-
-
 ### Plot mean and variance estimates:
 meanLinePlot = function(group,legend=FALSE){
   x = 1:5
@@ -242,6 +247,7 @@ meanLinePlot(1)
 meanLinePlot(2)
 meanLinePlot(3,TRUE)
 par(mfrow=c(1,1))
+
 
 
 
@@ -400,7 +406,7 @@ par(mfrow=c(1,1))
 
 
 
-### Look at differently clustered genes
+### Look at differently clustered genes (not included in paper)
 diff1 = setdiff(mcme.g1,mclust.g1) 
 diff2 = setdiff(mcme.g2,mclust.g2)
 diff3 = setdiff(mcme.g3,mclust.g3) 
@@ -449,9 +455,7 @@ hist(temp)
 
 
 
-
-
-### Uncertainty VS total error variance plot
+### Uncertainty VS total error variance plot (not included in paper)
 unc = res.mcme.full$uncertainty
 unc.mclust = res.mclust$uncertainty
 tv = data.frame(id=1:1000,totalvar=temp1,unc=unc,unc.mclust=unc.mclust)
@@ -490,13 +494,4 @@ unc.ratio = (unc+0.005)/(unc.mclust+0.005)
 plot(tv.sort$totalvar,(tv.sort$unc+0.005)/(tv.sort$unc.mclust+0.005),cex=0.5,log="y")
 abline(h=1)
 hist(log(unc.ratio))
-
-
-
-
-
-
-
-
-
 
