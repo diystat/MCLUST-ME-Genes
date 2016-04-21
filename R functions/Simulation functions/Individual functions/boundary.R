@@ -163,3 +163,33 @@ plot.boundary.new = function(simrun,pointsize,pointsize2){
   contour(x,y,ze,level=0,add=TRUE,drawlabels=FALSE,lwd=2)
 } 
 
+
+
+## Examine clustering uncertainties
+plot.uncr = function(seed,out){
+  k = which(out$seed==seed)
+  
+  # Extract clustering result for seed="seed"
+  i = (k-1)*7+1
+  res.mcme = out$sim.result[[i]]
+  res.mevvv = out$sim.result[[(i+1)]]
+  z.ini = out$sim.result[[(i+2)]]
+  rand.samples = out$sim.result[[(i+3)]]
+  errmat = out$sim.result[[(i+4)]]
+  index = out$sim.result[[(i+5)]]
+  k = out$sim.result[[(i+6)]]
+  simrun = list(res.mcme=res.mcme,res.mevvv=res.mevvv,
+    errmat=errmat,z.ini=z.ini,rand.samples=rand.samples,index=index,k=k)
+
+  # Obtain classification uncertainty vector
+  unc.mcme = res.mcme$uncertainty
+  unc.mclust = numeric(200)
+  for(i in 1:200){
+    unc.mclust[i] = 1-max(res.mevvv$z[i,])
+  }
+
+  point.size = 0.3+unc.mcme*4
+  point.size.mclust = 0.3+unc.mclust*4
+
+  plot.boundary.new(simrun,point.size,point.size.mclust)
+}

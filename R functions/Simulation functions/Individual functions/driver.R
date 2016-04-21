@@ -1,14 +1,9 @@
 
 # Simulation driver function for Sim 1 and Sim 2
 sim.driver = function(N,tau,mu1,mu2,sig1,sig2,k,p,nseed){
-  
-  source('~/Research Project/Simulations/Sim/Functions/par_data_run.R')
-  source('~/Research Project/R functions for MCME(VVV)/Other functions/fuzzyrand.R')
-  source('~/Research Project/Simulations/Sim/Functions/rand.R')
-  source('~/Research Project/Simulations/Sim/Functions/boundary.R')
-  
+ 
   simres = list()
-  randres = matrix(,nrow=nseed,ncol=8)
+  randres = matrix(0,nrow=nseed,ncol=8)
   
   v = seq(1,2*nseed,by=1)
   seedvec = sample(v,size=nseed)
@@ -39,6 +34,6 @@ sim.driver = function(N,tau,mu1,mu2,sig1,sig2,k,p,nseed){
   rand.avg = colMeans(randres)
   
   out = list(sim.result=simres, rand.raw=randres, rand.avg=rand.avg, seed=seedvec)
-  save(out,file="res.RData")
+  return(out)
 }
 

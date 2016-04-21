@@ -1,7 +1,90 @@
 
+ 
+#######################################################################
+###------------------- Functions for Simulation --------------------###
+#######################################################################
+
+
+
     ###########################################################
     ################ Two-Cluster Simulation ###################
     ###########################################################
+    
+### Simulation 1 wrapper    
+sim1 = function(p){
+  N = 200
+  tau = 0.5
+  mu1 = c(0,0)
+  mu2 = c(8,0)
+  sig1 = matrix(c(64,0,0,64),nrow=2)
+  sig2 = matrix(c(16,0,0,16),nrow=2)
+  k = 36
+  nseed = 100
+
+  # Check if singularity occurs for any seed
+  check.seed(N,tau,mu1,mu2,sig1,sig2,k,p)
+
+  # Run the simulation
+  out = sim.driver(N,tau,mu1,mu2,sig1,sig2,k,p,nseed)
+  return(out)
+}        
+    
+    
+
+### Simulation 2 wrapper    
+sim2 = function(p){
+  N = 200
+  tau = 0.5
+  mu1 = c(0,0)
+  mu2 = c(8,0)
+  sig1 = matrix(c(64,0,0,64),nrow=2)
+  sig2 = matrix(c(16,0,0,16),nrow=2)
+  k = 9
+  nseed = 100
+
+  # Check if singularity occurs for any seed
+  check.seed(N,tau,mu1,mu2,sig1,sig2,k,p)
+
+  # Run the simulation
+  out = sim.driver(N,tau,mu1,mu2,sig1,sig2,k,p,nseed)
+  return(out)
+}        
+    
+
+
+
+## Examine clustering uncertainties
+plot.uncr = function(seed,out){
+  k = which(out$seed==seed)
+  
+  # Extract clustering result for seed="seed"
+  i = (k-1)*7+1
+  res.mcme = out$sim.result[[i]]
+  res.mevvv = out$sim.result[[(i+1)]]
+  z.ini = out$sim.result[[(i+2)]]
+  rand.samples = out$sim.result[[(i+3)]]
+  errmat = out$sim.result[[(i+4)]]
+  index = out$sim.result[[(i+5)]]
+  k = out$sim.result[[(i+6)]]
+  simrun = list(res.mcme=res.mcme,res.mevvv=res.mevvv,
+    errmat=errmat,z.ini=z.ini,rand.samples=rand.samples,index=index,k=k)
+
+  # Obtain classification uncertainty vector
+  unc.mcme = res.mcme$uncertainty
+  unc.mclust = numeric(200)
+  for(i in 1:200){
+    unc.mclust[i] = 1-max(res.mevvv$z[i,])
+  }
+
+  point.size = 0.3+unc.mcme*4
+  point.size.mclust = 0.3+unc.mclust*4
+
+  plot.boundary.new(simrun,point.size,point.size.mclust)
+}
+
+
+
+
 
 ### implementation of fuzzy rand index described in Campello(2006)
 fuzzyrand = function(R,Q,tnorm="min"){

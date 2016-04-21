@@ -1,4 +1,10 @@
 
+
+#######################################################################
+###------------------------ Core Functions -------------------------###
+#######################################################################
+
+
 ### File description:
 ### This .R file contains all functions responsible for the EM algorithm
 ### of MCLUST-ME. The highest level wrapper is "mcmeVVV", which requires
