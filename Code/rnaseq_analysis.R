@@ -5,13 +5,17 @@
 #######################################################################
 
 
+## Source all necessary functions
+source("core_functions.R")
+source("simulation_functions.R")
 
-# Load required packages
+## Load required packages
 library(MASS)
 library(gdata)
 library(caret)
 library(mclust)
 library(phyclust)
+
 
 
 ###------------------- Importing Data ---------------------###

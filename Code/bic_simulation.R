@@ -5,6 +5,18 @@
 #######################################################################
 
 
+## Source all necessary functions
+source("core_functions.R")
+source("simulation_functions.R")
+
+## Load required packages
+library(MASS)
+library(gdata)
+library(caret)
+library(mclust)
+library(phyclust)
+
+
 ## Three cases:
 # Case 1: 3 clusters well separated
 bic1_101 = bic_wellsep(101)

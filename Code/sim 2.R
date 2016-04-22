@@ -4,6 +4,18 @@
 #######################################################################
 
 
+## Source all necessary functions
+source("core_functions.R")
+source("simulation_functions.R")
+
+## Load required packages
+library(MASS)
+library(gdata)
+library(caret)
+library(mclust)
+library(phyclust)
+
+
 ## Run simulation on p=0.1,0.3,0.5,0.7,0.9
 ## WARNING: Time-consuming
 out1 = sim2(0.1)
