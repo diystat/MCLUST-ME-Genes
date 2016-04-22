@@ -17,7 +17,7 @@ library(phyclust)
 ###------------------- Importing Data ---------------------###
 
 ###################################################################
-### Raw and processed data available in "RNA-seq Example/Data". ###
+### Raw and processed data available in "Data" folder.          ###
 ###################################################################
 
 # Import raw data
@@ -57,8 +57,8 @@ mclust.run = function(G){
 
 ###########################################################################
 ### WARNING: Code from line 68 to line 75 are EXTREMELY time-consuming. ###
-### The author strongly recommends using results in the folder          ###
-### "RNA-seq Example/Results" for further analysis.                     ###
+### The author strongly recommends using results in "Results" folder    ###
+### for further analysis.                                               ###
 ###########################################################################
 
 # Run MCLUST-ME assuming 1~8 clusters:
@@ -70,10 +70,10 @@ run5 = mclust.run(5)
 run6 = mclust.run(6)
 run7 = mclust.run(7)
 run8 = mclust.run(8)
-####################################################################
-### The BIC results above are stored in files named "run*.RData" ###
-### under "RNA-seq Example/Results/BIC".                         ###
-####################################################################
+##########################################################################
+### The BIC results above are stored in files named "rna_*group.RData" ###
+### in "Results" folder.                                               ###
+##########################################################################
 
 
 # Extract BIC values
@@ -102,8 +102,8 @@ legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
 res.mcme.full = run3
 ##########################################################
 ### The MLE and membership probabilities are stored in ###
-### the RData file "cluster_res.RData", under          ###
-### "RNA-seq Example/Results/MLE and membership".      ###
+### the RData file "rna_cluster_res.RData", under      ###
+### "Results" folder.                                  ###
 ##########################################################
 
 

@@ -12,10 +12,9 @@ out5 = sim1(0.5)
 out7 = sim1(0.7)
 out9 = sim1(0.9)
 
-#########################################################
-### All simulations results are available in:         ###
-### "Simulations/2-Cluster Simulation/Sim 1/Results". ###
-#########################################################
+##################################################################
+### All simulations results are available in "Results" folder. ###
+##################################################################
 
 
 

@@ -12,10 +12,9 @@ out5 = sim2(0.5)
 out7 = sim2(0.7)
 out9 = sim2(0.9)
 
-#########################################################
-### All simulations results are available in:         ###
-### "Simulations/2-Cluster Simulation/Sim 2/Results". ###
-#########################################################
+##################################################################
+### All simulations results are available in "Results" folder. ###
+##################################################################
 
 
 

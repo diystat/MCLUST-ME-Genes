@@ -15,10 +15,9 @@ bic2_79 = bic_2close(79)
 # Case 3: all 3 clusters close
 bic3_51 = bic_3close(51)
 
-#########################################################
-### All simulations results are available in:         ###
-### "Simulations/BIC Simulation/Sim 2/Results".       ###
-#########################################################
+##################################################################
+### All simulations results are available in "Results" folder. ###
+##################################################################
 
 
 
@@ -33,3 +32,4 @@ plot.wellsep(101,bic1_101)
 plot.2close(79,bic2_79)
 plot.3close(51,bic3_51)
 par(mfrow=c(1,1))
+
