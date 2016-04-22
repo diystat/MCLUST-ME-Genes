@@ -15,6 +15,11 @@ bic2_79 = bic_2close(79)
 # Case 3: all 3 clusters close
 bic3_51 = bic_3close(51)
 
+#########################################################
+### All simulations results are available in:         ###
+### "Simulations/BIC Simulation/Sim 2/Results".       ###
+#########################################################
+
 
 
 
