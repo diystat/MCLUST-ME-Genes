@@ -21,15 +21,12 @@ library(phyclust)
 ###################################################################
 
 # Import raw data
-dd = "2015-11-06"
-file.out = sprintf("%s.Coaker.Rdata", dd)
-print(load(file.out))
-
-obs = full$beta[top, 1:5]
-errary = v.beta[,,top]
+load("rna_raw.RData")
+obs = full$beta[top, 1:5] # data points
+errary = v.beta[,,top] # measurement error covariances
 
 # Export processed data
-# save(obs,errary,file="RNASeq.RData")
+# save(obs,errary,file="rna_processed.RData")
 
 
 
