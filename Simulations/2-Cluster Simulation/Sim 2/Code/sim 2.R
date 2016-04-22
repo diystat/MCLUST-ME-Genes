@@ -5,11 +5,19 @@
 
 
 ## Run simulation on p=0.1,0.3,0.5,0.7,0.9
+## WARNING: Time-consuming
 out1 = sim2(0.1)
 out3 = sim2(0.3)
 out5 = sim2(0.5)
 out7 = sim2(0.7)
 out9 = sim2(0.9)
+
+#########################################################
+### All simulations results are available in:         ###
+### "Simulations/2-Cluster Simulation/Sim 2/Results". ###
+#########################################################
+
+
 
 
 

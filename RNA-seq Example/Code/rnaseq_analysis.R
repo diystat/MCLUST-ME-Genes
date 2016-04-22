@@ -5,6 +5,21 @@
 #######################################################################
 
 
+
+# Load required packages
+library(MASS)
+library(gdata)
+library(caret)
+library(mclust)
+library(phyclust)
+
+
+###------------------- Importing Data ---------------------###
+
+###################################################################
+### Raw and processed data available in "RNA-seq Example/Data". ###
+###################################################################
+
 # Import raw data
 dd = "2015-11-06"
 file.out = sprintf("%s.Coaker.Rdata", dd)
@@ -14,16 +29,15 @@ obs = full$beta[top, 1:5]
 errary = v.beta[,,top]
 
 # Export processed data
-save(obs,errary,file="RNASeq.RData")
+# save(obs,errary,file="RNASeq.RData")
 
 
 
 
 ###------------------- Clustering ---------------------###
 
-# Group data with mclust first:
-library(mclust)
-res.mclust = Mclust(obs,modelNames="VVV")
+# Cluster the data with MCLUST first:
+res.mclust = Mclust(obs,modelNames="VVV") # Running time < 5min
 summary(res.mclust)
 
 # Define a wrapper function for MCLUST-ME:
@@ -38,11 +52,17 @@ mclust.run = function(G){
       z.ini[i,j] = ifelse(cl[i]==j,1,0)
     }
   }
-  
   # Group data with MCLUST-ME:
   res.mcme.full = mcmeVVV(obs,z.ini,errary)
   return(res.mcme.full)  
 }
+
+
+###########################################################################
+### WARNING: Code from line 68 to line 75 are EXTREMELY time-consuming. ###
+### The author strongly recommends using results in the folder          ###
+### "RNA-seq Example/Results" for further analysis.                     ###
+###########################################################################
 
 # Run MCLUST-ME assuming 1~8 clusters:
 run1 = mclust.run(1)
@@ -53,6 +73,11 @@ run5 = mclust.run(5)
 run6 = mclust.run(6)
 run7 = mclust.run(7)
 run8 = mclust.run(8)
+####################################################################
+### The BIC results above are stored in files named "run*.RData" ###
+### under "RNA-seq Example/Results/BIC".                         ###
+####################################################################
+
 
 # Extract BIC values
 b = numeric(8)
@@ -78,15 +103,17 @@ legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
 
 # BIC is greatest with 3 components, so keep this result:
 res.mcme.full = run3
+##########################################################
+### The MLE and membership probabilities are stored in ###
+### the RData file "cluster_res.RData", under          ###
+### "RNA-seq Example/Results/MLE and membership".      ###
+##########################################################
 
-# Write result to file
-save(res.mcme.full,file="realDataClusterResult.RData")
 
 
 
 
-
-###----------------- Analysis ------------------###
+###---------------------- Analysis -----------------------###
 
 ### Obtain mean and covariance estimates
 # MCLUST-ME
@@ -123,7 +150,6 @@ for(i in 1:1000){
 
 
 ### Confusion matrix:
-library(caret)
 confusionMatrix(predClass,predClass.mclust,dnn=c("MCME","MCLUST"))
 
 ### Rand index:
