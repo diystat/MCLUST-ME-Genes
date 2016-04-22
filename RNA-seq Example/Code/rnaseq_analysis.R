@@ -12,7 +12,6 @@ print(load(file.out))
 
 obs = full$beta[top, 1:5]
 errary = v.beta[,,top]
-betasd = sd.beta[top,]
 
 # Export processed data
 save(obs,errary,file="RNASeq.RData")
@@ -89,18 +88,20 @@ save(res.mcme.full,file="realDataClusterResult.RData")
 
 ###----------------- Analysis ------------------###
 
-## Obtain mean and covariance estimates
+### Obtain mean and covariance estimates
+# MCLUST-ME
 param = res.mcme.full$parameters
-names(param)
-mu.mcme = param$muhat
-sigma.mcme = param$sigmahat
+mu.mcme = param$muhat # centers
+sigma.mcme = param$sigmahat # covariances
 
+# MCLUST
 param = res.mclust$parameters
-mu.mclust = param$mean
-sigma.mclust = param$variance$sigma
+mu.mclust = param$mean # centers
+sigma.mclust = param$variance$sigma # covariances
 
 
 ### Predicted class labels:
+# MCLUST-ME labels
 zhat = res.mcme.full$z
 predClass = numeric(1000)
 for(i in 1:1000){
@@ -108,6 +109,7 @@ for(i in 1:1000){
   predClass[i] = which(temp==max(temp))
 }
 
+# MCLUST labels
 zhat.mclust = res.mclust$z
 predClass.mclust = numeric(1000)
 for(i in 1:1000){
@@ -161,7 +163,6 @@ g3.coord.mc = ellipse(sigma.mclust[2:3,2:3,3],centre=mu.mclust[2:3,3],level=0.9)
 
 par(mfrow=c(2,2))
 plot(1:8,b,main="BIC of MCLUST-ME",type="b",pch=0,lwd=2,xlab="Number of components",ylab="BIC")
-#plot(1:8,a,main="BIC of MCLUST",type="b",pch=0,lwd=2,xlab="Number of components",ylab="BIC")
 lines(1:8,a,lty="dashed",type="b",pch=0,lwd=2)
 
 plot(obs[,2],obs[,3],main="MCLUST-ME",pch=c(1,2,3)[predClass],cex=0.7,
