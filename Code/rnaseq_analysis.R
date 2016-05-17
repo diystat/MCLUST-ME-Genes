@@ -15,6 +15,7 @@ library(gdata)
 library(caret)
 library(mclust)
 library(phyclust)
+library(openintro)
 
 
 
@@ -82,13 +83,28 @@ run8 = mclust.run(8)
 
 # Extract BIC values
 b = numeric(8)
+load("rna_1group.RData")
 b[1] = run1$BIC
+
+load("rna_2group.RData")
 b[2] = run2$BIC
+
+load("rna_3group.RData")
 b[3] = run3$BIC
+
+load("rna_4group.RData")
 b[4] = run4$BIC
+
+load("rna_5group.RData")
 b[5] = run5$BIC
+
+load("rna_6group.RData")
 b[6] = run6$BIC
+
+load("rna_7group.RData")
 b[7] = run7$BIC
+
+load("rna_8group.RData")
 b[8] = run8$BIC
 
 a = res.mclust$BIC[1:8]
@@ -103,6 +119,7 @@ legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
     pch=c(0,2),lty=c("solid","dashed"),lwd=2)
 
 # BIC is greatest with 3 components, so keep this result:
+load("rna_3group.RData")
 res.mcme.full = run3
 ##########################################################
 ### The MLE and membership probabilities are stored in ###
@@ -152,6 +169,15 @@ for(i in 1:1000){
 
 ### Confusion matrix:
 confusionMatrix(predClass,predClass.mclust,dnn=c("MCME","MCLUST"))
+conf = cbind(predClass.mclust,predClass)
+m = data.frame(conf)
+contTable(m)
+
+data(email)
+table(email[,c("spam", "sent_email")])
+contTable(email[,c("spam", "sent_email")])  
+  
+  
 
 ### Rand index:
 phyclust::RRand(predClass,predClass.mclust)
@@ -188,28 +214,27 @@ g1.coord.mc = ellipse(sigma.mclust[2:3,2:3,1],centre=mu.mclust[2:3,1],level=0.9)
 g2.coord.mc = ellipse(sigma.mclust[2:3,2:3,2],centre=mu.mclust[2:3,2],level=0.9)
 g3.coord.mc = ellipse(sigma.mclust[2:3,2:3,3],centre=mu.mclust[2:3,3],level=0.9)
 
-par(mfrow=c(2,2))
-plot(1:8,b,main="BIC of MCLUST-ME",type="b",pch=0,lwd=2,xlab="Number of components",ylab="BIC")
-lines(1:8,a,lty="dashed",type="b",pch=0,lwd=2)
+png("rna.png",width=14,height=11,units="in",res=300)
+par(mfrow=c(2,2),cex.lab=1.5,cex.axis=1.7,cex.main=1.6)
+plot(1:8,b,main="BIC of MCLUST-ME",type="b",pch=0,lwd=2,xlab="Number of components",ylab="")
 
-plot(obs[,2],obs[,3],main="MCLUST-ME",pch=c(1,2,3)[predClass],cex=0.7,
+plot(obs[,2],obs[,3],main="MCLUST-ME Clusters",pch=c(1,2,3)[predClass],cex=0.7,
   xlab="1h",ylab="3h",col="#00000070")
 # Plot the confidence outlines
-lines(g1.coord,type="l")
-lines(g2.coord,type="l")
-lines(g3.coord,type="l")
+lines(g1.coord,type="l",lwd=2)
+lines(g2.coord,type="l",lwd=2)
+lines(g3.coord,type="l",lwd=2)
 
-plot(obs[,2],obs[,3],main="MCLUST",pch=c(1,2,3)[predClass.mclust],cex=0.7,
+plot(1:8,a,main="BIC of MCLUST",type="b",pch=0,lwd=2,xlab="Number of components",ylab="")
+
+plot(obs[,2],obs[,3],main="MCLUST Clusters",pch=c(1,2,3)[predClass.mclust],cex=0.7,
   xlab="1h",ylab="3h",col="#00000070")
 # Plot the confidence outlines
-lines(g1.coord.mc,type="l")
-lines(g2.coord.mc,type="l")
-lines(g3.coord.mc,type="l")
-lines(g1.coord,type="l",lty="dashed")
-lines(g2.coord,type="l",lty="dashed")
-lines(g3.coord,type="l",lty="dashed")
-par(mfrow=c(1,1))
-
+lines(g1.coord.mc,type="l",lwd=2)
+lines(g2.coord.mc,type="l",lwd=2)
+lines(g3.coord.mc,type="l",lwd=2)
+par(mfrow=c(1,1),cex.lab=1,cex.axis=1,cex.main=1)
+dev.off()
 
 
 
@@ -289,7 +314,8 @@ bwlineplot = function(y,groupnum,method="MCLUST-ME"){
 }
 
 # Black and white line plots
-par(mfrow=c(2,3))
+png("line.png",width=15,height=8,units="in",res=300)
+par(mfrow=c(2,3),cex.lab=1.5,cex.axis=1.7,cex.main=1.6)
 
 bwlineplot(g1,1) # MCLUST-ME group 1
 bwlineplot(g2,2) # MCLUST-ME group 2
@@ -298,6 +324,6 @@ bwlineplot(g1m,1,"MCLUST") # MCLUST-ME group 1
 bwlineplot(g2m,2,"MCLUST") # MCLUST-ME group 2
 bwlineplot(g3m,3,"MCLUST") # MCLUST-ME group 3
   
-par(mfrow=c(1,1))
-
+par(mfrow=c(1,1),cex.lab=1,cex.axis=1,cex.main=1)
+dev.off()
 

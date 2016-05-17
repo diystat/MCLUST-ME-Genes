@@ -955,10 +955,10 @@ plot.wellsep = function(seed,bicws){
   points(gp3,pch=2)
 
   plot(bic.mcme,type="b",lwd=2,ylim=c(ymin.bic,ymax.bic),
-    xlab="number of components",ylab="BIC",pch=0)
+    xlab="number of components",ylab="",pch=0,main="BIC values")
   lines(1:7,bic.mclust[1:7],type="b",lty="dashed",pch=2,lwd=2)
   legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
-    pch=c(0,2),lty=c("solid","dashed"),cex=0.5)
+    pch=c(0,2),lty=c("solid","dashed"),cex=0.8)
 }
 
 
@@ -1015,10 +1015,10 @@ plot.2close = function(seed,bic2){
   points(gp3,pch=2)
 
   plot(bic.mcme,type="b",lwd=2,ylim=c(ymin.bic,ymax.bic),
-    xlab="number of components",ylab="BIC",pch=0)
+    xlab="number of components",ylab="",pch=0,main="BIC values")
   lines(1:7,bic.mclust[1:7],type="b",lty="dashed",pch=2,lwd=2)
   legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
-    pch=c(0,2),lty=c("solid","dashed"),cex=0.5)
+    pch=c(0,2),lty=c("solid","dashed"),cex=0.8)
 }
 
 
@@ -1074,10 +1074,10 @@ plot.3close = function(seed,bic3){
   points(gp3,pch=2)
 
   plot(bic.mcme,type="b",lwd=2,ylim=c(ymin.bic,ymax.bic),
-    xlab="number of components",ylab="BIC",pch=0)
+    xlab="number of components",ylab="",pch=0,main="BIC values")
   lines(1:7,bic.mclust[1:7],type="b",lty="dashed",pch=2,lwd=2)
   legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
-    pch=c(0,2),lty=c("solid","dashed"),cex=0.5)
+    pch=c(0,2),lty=c("solid","dashed"),cex=0.8)
 }
 
 

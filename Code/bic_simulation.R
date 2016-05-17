@@ -39,9 +39,19 @@ bic3_51 = bic_3close(51)
     ##########################################################
 
 ## Plot the optimal clusters and BIC values for each case
+png("bic_paper.png", width = 12, height = 14,units="in",res=300)
+par(cex.main=2.3,cex.lab=2.3,cex.axis=2)
 layout(matrix(1:6, 3, 2, byrow = TRUE))
-plot.wellsep(101,bic1_101)
-plot.2close(79,bic2_79)
-plot.3close(51,bic3_51)
-par(mfrow=c(1,1))
 
+load("bic1_multiseeds.RData")
+bic1_101 = bicres$res5
+plot.wellsep(101,bic1_101)
+
+load("bic2_79.RData")
+plot.2close(79,bic2_79)
+
+load("bic3_51.RData")
+plot.3close(51,bic3_51)
+
+par(cex.lab=1,cex.axis=1,cex.main=1)
+dev.off()
