@@ -26,7 +26,7 @@ library(openintro)
 ###################################################################
 
 # Import raw data
-load("rna_raw.RData")
+load("Data/rna_raw.RData")
 obs = full$beta[top, 1:5] # data points
 errary = v.beta[,,top] # measurement error covariances
 
@@ -83,28 +83,28 @@ run8 = mclust.run(8)
 
 # Extract BIC values
 b = numeric(8)
-load("rna_1group.RData")
+load("Results/rna_1group.RData")
 b[1] = run1$BIC
 
-load("rna_2group.RData")
+load("Results/rna_2group.RData")
 b[2] = run2$BIC
 
-load("rna_3group.RData")
+load("Results/rna_3group.RData")
 b[3] = run3$BIC
 
-load("rna_4group.RData")
+load("Results/rna_4group.RData")
 b[4] = run4$BIC
 
-load("rna_5group.RData")
+load("Results/rna_5group.RData")
 b[5] = run5$BIC
 
-load("rna_6group.RData")
+load("Results/rna_6group.RData")
 b[6] = run6$BIC
 
-load("rna_7group.RData")
+load("Results/rna_7group.RData")
 b[7] = run7$BIC
 
-load("rna_8group.RData")
+load("Results/rna_8group.RData")
 b[8] = run8$BIC
 
 a = res.mclust$BIC[1:8]
@@ -119,7 +119,7 @@ legend("bottomright",legend=c("MCLUST-ME","MCLUST"),
     pch=c(0,2),lty=c("solid","dashed"),lwd=2)
 
 # BIC is greatest with 3 components, so keep this result:
-load("rna_3group.RData")
+load("Results/rna_3group.RData")
 res.mcme.full = run3
 ##########################################################
 ### The MLE and membership probabilities are stored in ###
@@ -173,10 +173,6 @@ conf = cbind(predClass.mclust,predClass)
 m = data.frame(conf)
 contTable(m)
 
-data(email)
-table(email[,c("spam", "sent_email")])
-contTable(email[,c("spam", "sent_email")])  
-  
   
 
 ### Rand index:
@@ -192,8 +188,9 @@ phyclust::RRand(predClass,predClass.mclust)
     ##########################################################
 
 ### Raw data scatterplot matrix:
+tiff("Fig10.tiff",width=1580,height=1580,compression="lzw",res=250)
 pairs(obs,labels=c("10min","1h","3h","6h","12h"),pch=16,cex=0.6)
-
+dev.off()
 
 
 
@@ -214,20 +211,21 @@ g1.coord.mc = ellipse(sigma.mclust[2:3,2:3,1],centre=mu.mclust[2:3,1],level=0.9)
 g2.coord.mc = ellipse(sigma.mclust[2:3,2:3,2],centre=mu.mclust[2:3,2],level=0.9)
 g3.coord.mc = ellipse(sigma.mclust[2:3,2:3,3],centre=mu.mclust[2:3,3],level=0.9)
 
-png("rna.png",width=14,height=11,units="in",res=300)
+#png("rna.png",width=14,height=11,units="in",res=300)
+tiff("Fig11.tiff",width=1680,height=1480,compression="lzw",res=240,pointsize=9)
 par(mfrow=c(2,2),cex.lab=1.5,cex.axis=1.7,cex.main=1.6)
 plot(1:8,b,main="BIC of MCLUST-ME",type="b",pch=0,lwd=2,xlab="Number of components",ylab="")
 
-plot(obs[,2],obs[,3],main="MCLUST-ME Clusters",pch=c(1,2,3)[predClass],cex=0.7,
+plot(1:8,a,main="BIC of MCLUST",type="b",pch=0,lwd=2,xlab="Number of components",ylab="")
+
+plot(obs[,2],obs[,3],main="MCLUST-ME Clusters",pch=c(1,2,3)[predClass],cex=1.2,
   xlab="1h",ylab="3h",col="#00000070")
 # Plot the confidence outlines
 lines(g1.coord,type="l",lwd=2)
 lines(g2.coord,type="l",lwd=2)
 lines(g3.coord,type="l",lwd=2)
 
-plot(1:8,a,main="BIC of MCLUST",type="b",pch=0,lwd=2,xlab="Number of components",ylab="")
-
-plot(obs[,2],obs[,3],main="MCLUST Clusters",pch=c(1,2,3)[predClass.mclust],cex=0.7,
+plot(obs[,2],obs[,3],main="MCLUST Clusters",pch=c(1,2,3)[predClass.mclust],cex=1.2,
   xlab="1h",ylab="3h",col="#00000070")
 # Plot the confidence outlines
 lines(g1.coord.mc,type="l",lwd=2)
@@ -314,7 +312,8 @@ bwlineplot = function(y,groupnum,method="MCLUST-ME"){
 }
 
 # Black and white line plots
-png("line.png",width=15,height=8,units="in",res=300)
+#png("line.png",width=15,height=8,units="in",res=300)
+tiff("Fig12.tiff",width=2080,height=1180,compression="lzw",res=240,pointsize=9)
 par(mfrow=c(2,3),cex.lab=1.5,cex.axis=1.7,cex.main=1.6)
 
 bwlineplot(g1,1) # MCLUST-ME group 1
