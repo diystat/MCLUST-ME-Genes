@@ -78,7 +78,7 @@ mcmeVVV = function(data, z, err, d=1, itmax=Inf, lb=1e-3){
     delta = abs(llike[k-1]-llike[k])/(1+abs(llike[k]))
     
     it = k-2
-    print(paste("iteration=",it,sep=""))
+    #print(paste("iteration=",it,sep=""))
     
     if(delta<tol || it>=itmax) break;
   }

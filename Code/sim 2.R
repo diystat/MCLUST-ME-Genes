@@ -45,17 +45,17 @@ out9 = sim2(0.9)
 ## the user's seed of choice.
 load("Results/res_sim2_05.RData")
 res5 = out$sim.result
-seeds = out$seed
-k = which(seeds==2) 
+seeds = out$seed;seeds
+k = which(seeds==33) 
 i = (k-1)*7+1
-simrun2 = list(res.mcme=res5[[i]],res.mevvv=res5[[(i+1)]],z.ini=res5$z.ini,
+simrun2 = list(res.mcme=res5[[i]],res.mevvv=res5[[(i+1)]],z.ini=res5[[(i+2)]],
   rand.samples=res5[[(i+3)]],errmat=res5[[(i+4)]],index=res5[[(i+5)]],k=res5[[(i+6)]])
 
-tiff("Fig6.tiff",width=2090,height=1190,compression="lzw",res=250)
+#png("Fig6.png",width=9,height=5,units="in",res=190)
 par(mfrow=c(1,2))
 plot.boundary(simrun2,2)
 par(mfrow=c(1,1))
-dev.off()
+#dev.off()
 
 
 
