@@ -5,8 +5,8 @@
 
 
 ## Source all necessary functions
-source("core_functions.R")
-source("simulation_functions.R")
+source("Code/core_functions.R")
+source("Code/simulation_functions.R")
 
 ## Load required packages
 library(MASS)
