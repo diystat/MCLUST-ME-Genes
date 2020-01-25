@@ -2,14 +2,23 @@
 ###------------------------ RNA-Seq Example ------------------------###
 #######################################################################
 
-## 01/03/2020
+## 01/13/2020
 ##
 ## Robustness concerns: what if the error variance matrices are
 ## estimated wrong?  We will ranomly double or halve the estiamted
 ## variance-covariance matrices and see how the clustereing results
 ## change.
+##
+## 01/15/2020
+##
+## Or we can simualte another set of v.beta values by parametric
+## boostrapping and fit our model with the modified error covariances.
 
+##  Linux working directory
 setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+
+## Windows working directory
+## setwd("D:/ongoing/Model-Based-Clustering-Research");
 
 ## Source all necessary functions
 source("Code/core_functions.R")
@@ -32,7 +41,8 @@ library(psych)
 ###################################################################
 
 # Import raw data
-load("Data/rna_raw.RData")
+print(load("Data/rna_raw.RData"));
+print(load("Results/1000.simulated.v.beta.RData"));
 
 ## Random sample 1000 genes, excluding rows with 0 relative frequnencies under any treatment
 n.genes = nrow(nb.data$counts);
@@ -83,6 +93,10 @@ if (FALSE) {
 ## 0. Run MCME with the originally estimated errors
 res0 = mcmeVVV(obs, z.ini, errary);
 res0$classification = 1 + (res0$z[,2]>0.5);
+
+## The four cells should be 775, 10, 30, 185
+table(res.mclust$classification, res0$classification);
+
 
 ## 1. Run MCME with modified errors 
 
@@ -139,22 +153,56 @@ for (i in 1:m){
 res3 = mcmeVVV(obs, z.ini, err3);
 res3$classification = 1 + (res3$z[,2]>0.5);
 
+## 01/15/2020, load previous results, then run additional sets
+if (FALSE) {
+  file.results = sprintf("Results/res_real2d_v3_m%d_seed%d.Rdata", m, seed);
+  print(load(file.results));
+}
+
+## 4. Run MCME with simulated (bootstrap) erros in v.beta.sim
+dim(v.beta.sim);
+err4 = v.beta.sim[2:3,2:3,,1];
+res4 = mcmeVVV(obs, z.ini, err4);
+res4$classification = 1 + (res4$z[,2]>0.5);
+
+## 5. Run MCME with simulated (bootstrap) erros in v.beta.sim
+err5 = v.beta.sim[2:3,2:3,,2];
+res5 = mcmeVVV(obs, z.ini, err5);
+res5$classification = 1 + (res5$z[,2]>0.5);
+
+## 6. Run MCME with simulated (bootstrap) erros in v.beta.sim
+err6 = v.beta.sim[2:3,2:3,,3];
+res6 = mcmeVVV(obs, z.ini, err6);
+res6$classification = 1 + (res6$z[,2]>0.5);
 
 
 ## Save all results
-file.results = sprintf("Results/res_real2d_v3_m%d_seed%d.Rdata", m, seed);
-save(m, seed, ss, obs, errary, seed1, err1, seed2, err2, seed3, err3, res.mclust, res0, res1, res2, res3, file=file.results);
+file.results = sprintf("Results/res_real2d_v3_m%d_seed%d.%s.Rdata", m, seed, Sys.Date());
+## save(m, seed, ss, obs, errary, seed1, err1, seed2, err2, seed3, err3, res.mclust, res0, res1, res2, res3, file=file.results);
 
+save(m, seed, ss, obs, errary, seed1, err1, seed2, err2, seed3, err3, err4, err5, err6,
+     res.mclust, res0, res1, res2, res3, res4, res5, res6, file=file.results);
 
 ## Quick comparison
 table(res.mclust$classification, res0$classification);
+
 table(res.mclust$classification, res1$classification);
 table(res.mclust$classification, res2$classification);
 table(res.mclust$classification, res3$classification);
+table(res.mclust$classification, res4$classification);
+table(res.mclust$classification, res5$classification);
+table(res.mclust$classification, res6$classification);
 
 table(res1$classification, res0$classification);
 table(res2$classification, res0$classification);
 table(res3$classification, res0$classification);
+table(res4$classification, res0$classification);
+table(res5$classification, res0$classification);
+table(res6$classification, res0$classification);
+
+table(res5$classification, res4$classification);
+table(res6$classification, res4$classification);
+table(res6$classification, res5$classification);
 
 adjustedRandIndex(res.mclust$classification, res0$classification);
 adjustedRandIndex(res.mclust$classification, res1$classification);
@@ -164,3 +212,6 @@ adjustedRandIndex(res.mclust$classification, res3$classification);
 adjustedRandIndex(res1$classification, res0$classification);
 adjustedRandIndex(res2$classification, res0$classification);
 adjustedRandIndex(res3$classification, res0$classification);
+adjustedRandIndex(res4$classification, res0$classification);
+adjustedRandIndex(res5$classification, res0$classification);
+adjustedRandIndex(res6$classification, res0$classification);
