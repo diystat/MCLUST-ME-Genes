@@ -2,7 +2,11 @@
 ###------------------------ RNA-Seq Example ------------------------###
 #######################################################################
 
-setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+## Linux working directory
+## setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+
+## Windows working directory
+setwd("D:/ongoing/Model-based-Clustering-Research");
 
 library(mclust);
 library(phyclust)
@@ -53,6 +57,10 @@ for(i in 1:1000){
   group.mcme[i] = order(-res.mcme$z[i,])[1];
 }
 
+table(group.mclust, group.mcme);
+
+id.diff = group.mclust != group.mcme;
+
 ## Similarity between two groupings
 RRand(group.mclust, group.mcme) # from package 'phyclust'
 
@@ -60,7 +68,9 @@ RRand(group.mclust, group.mcme) # from package 'phyclust'
 # 0.8070  0.5918  0.2900 
 
 
-file.png = sprintf("Graphs/real_data_seed%d_clustering_results.png", seed);
+## Last updated: 2020-Feb-03 
+
+file.png = sprintf("Graphs/real_data_seed%d_clustering_results.%s.png", seed, Sys.Date());
 png(file.png, width=14, height=7, units="in", res=270, pointsize=14)
 
 ## Compare the two clustering results
@@ -72,10 +82,12 @@ pchs = mclust.options("classPlotSymbols");
 par(mfrow=c(1,2))
 plot(obs, col = cols[group.mclust], xlab="1h", ylab="3h", main="MCLUST Clustering", pch=pchs[group.mclust], cex=0.8)
 abline(h=0,v=0,lty="dashed",col="gray")
+points(obs[id.diff,], pch=1, cex=1.5, lwd=1.5)
 
 
 plot(obs, col = cols[group.mcme], xlab="1h", ylab="3h", main="MCLUST-ME Clustering", pch=pchs[group.mcme], cex=0.8)
 abline(h=0,v=0,lty="dashed",col="gray")
+points(obs[id.diff,], pch=1, cex=1.5, lwd=1.5)
 
 par(mfrow=c(1,1))
 
@@ -98,9 +110,13 @@ for(i in 1:1000){
 }
 
 ## Use det()
-sd = numeric(1000)
+sd = numeric(m);
+se = matrix(NA, m, 2);
+
 for(i in 1:1000){
   sd[i] = det(errary[,,i])
+  se[i,1] = errary[1,1,i];
+  se[i,2] = errary[2,2,i];
 }
 
 
@@ -112,7 +128,25 @@ id21 = group.mclust ==2 & group.mcme==1;
 
 id  = group.mclust != group.mcme;
 
+## Last update: 2020-Feb-03
+file.eps = sprintf("Graphs/real_data_se_beta_%s.eps", Sys.Date());
+postscript(file.eps, paper="special", width=6, height=6);
+
+## plot(se, xlim = c(0, 0.5), ylim = c(0, 0.5), pch=16)
+plot(se, log="xy", 
+##     xlim = c(0.0005, 0.6),
+     ylim = c(0.001, 0.5),
+     main="Standard errors of the estimated  \n log fold changes at 1h and 3h", 
+     xlab = 'SE of log fold change at 1h',
+     ylab = 'SE of log fold chnage at 3h')
+points(se[id21,], col="magenta", pch=19);
+points(se[id12,], col="cyan", pch=19);
+
+dev.off();
+
 ## Examine the error distribution of among the points of disagreements  
+s = st;
+
 quantile(s);
 ## quantile(s[id]);
 quantile(s[id12]);

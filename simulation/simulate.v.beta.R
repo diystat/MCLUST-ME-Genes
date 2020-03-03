@@ -5,6 +5,8 @@ rm(list());
 #######################################################################
 
 setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+## setwd("D:/ongoing/Model-based-Clustering-Research");
+
 library(NBPSeq);
 library(MASS);
 

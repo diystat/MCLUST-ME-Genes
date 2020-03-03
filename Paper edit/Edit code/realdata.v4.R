@@ -3,13 +3,13 @@
 #######################################################################
 
 ## 01/25/2020
-## Try the mError method by Kumar and Patel on the real data set.
+## Try the kError method by Kumar and Patel on the real data set.
 
 ##  Linux working directory
-setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+## setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
 
 ## Windows working directory
-## setwd("D:/ongoing/Model-Based-Clustering-Research");
+setwd("D:/ongoing/Model-Based-Clustering-Research");
 
 ## Source all necessary functions
 source("Code/core_functions.R")
@@ -24,7 +24,7 @@ library(phyclust)
 library(openintro)
 library(psych)
 
-library(NBPSeq);
+## library(NBPSeq);
 
 
 ###------------------- Importing Data ---------------------###
@@ -88,7 +88,7 @@ compute.center = function(y, iv) {
 
 }
 
-test.compute.center() {
+test.compute.center = function() {
   y = obs;
 
   ## use identity covariances
@@ -103,7 +103,7 @@ test.compute.center() {
 
 }
 
-## Compute distance matrix using the mError formula
+## Compute distance matrix using the kError formula
 ## @param y observations, m by d.
 ## @param v covariances for each y, d x d x m.
 ## @mu the centers
@@ -124,7 +124,7 @@ compute.distance.matrix = function(y, iv, mu) {
   dist
 }
 
-test.compute.distance.matrix() {
+test.compute.distance.matrix = function() {
   y = obs;
   iv = compute.iv(errary);
   mu = res0$parameters$muhat;
@@ -160,14 +160,14 @@ test.compute.distance.matrix() {
 
 }
 
-## One step of mError: find the centers of the clusters
+## One step of kError: find the centers of the clusters
 ##
 ## @param y observations, m by d.
 ## @param iv inverses of covariances for each y, d x d x m.
 ## @param cl current classifications
 ##
 ## output: new centers
-mError.1 = function(y, iv, cl) {
+kError.1 = function(y, iv, cl) {
   m = nrow(y);
   d = ncol(y);
 
@@ -192,7 +192,7 @@ mError.1 = function(y, iv, cl) {
 ## @param mu, centers of the clusters
 ##
 ## output: cl, classification
-mError.2 = function(y, iv, mu){
+kError.2 = function(y, iv, mu){
   dist = compute.distance.matrix(y, iv, mu);
   m = nrow(y);
   cl =  numeric(m);
@@ -202,11 +202,11 @@ mError.2 = function(y, iv, mu){
   cl
 }
 
-mError = function(y, iv, cl, niter=10) {
+kError = function(y, iv, cl, niter=10) {
   for (i in 1:niter) {
-    mu = mError.1(y, iv, cl);
+    mu = kError.1(y, iv, cl);
     cl.old = cl;
-    cl = mError.2(y, iv, mu);
+    cl = kError.2(y, iv, mu);
 
     if (all(cl.old==cl)) {
       return(list(mu=mu, classification=cl, niter=i));
@@ -218,9 +218,9 @@ mError = function(y, iv, cl, niter=10) {
 
 }
 
-examine.mError.stesp = function() {
+examine.kError.stesp = function() {
 
-  ##  Inspect steps in mError
+  ##  Inspect steps in kError
   y = obs;
   iv = compute.iv(errary);
   cl = res0$classification;
@@ -231,22 +231,26 @@ examine.mError.stesp = function() {
   for (i in 1:8){ 
     plot(obs, col=cl);
 
-    mu = mError.1(y, iv, cl);
-    cl = mError.2(y, iv, mu);
+    mu = kError.1(y, iv, cl);
+    cl = kError.2(y, iv, mu);
   }
 
 }
  
 main = function(){
+  
   y = obs;
   iv = compute.iv(errary);
   cl = res0$classification;
 
-  res.mError = mError(y, iv, cl);
-  cl1 = res.mError$classification;
+  res.kError = kError(y, iv, cl);
+  cl1 = res.kError$classification;
   plot(obs, col=cl1);
 
-  file.eps = sprintf("Graphs/real_data_seed%d_mError_results.eps", seed);
+  file.results = sprintf("Results/real_data_seed%d_kError_results.%s.Rdata", seed, Sys.Date());
+  save(y, iv, cl, res.kError, file=file.results);
+  
+  file.eps = sprintf("Graphs/real_data_seed%d_kError_results.eps", seed);
   postscript(file.eps, paper="special", width=6, height=6);
 
   cols = mclust.options("classPlotColors");
@@ -254,9 +258,9 @@ main = function(){
 
   
   plot(obs,
-       xlab="1h", ylab="3h", main="mError Clustering",
-       col = cols[res.mError$classification],
-       pch = pchs[res.mError$classification])
+       xlab="1h", ylab="3h", main="kError Clustering",
+       col = cols[res.kError$classification],
+       pch = pchs[res.kError$classification])
 
   dev.off()
 

@@ -2,7 +2,11 @@
 ###------------------------ RNA-Seq Example ------------------------###
 #######################################################################
 
-setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+## Linux working directory
+## setwd("/home/yanming/ongoing/Model-based-Clustering-Research");
+
+## Windows working directory
+setwd("D:/ongoing/Model-based-Clustering-Research");
 
 library(mclust);
 library(phyclust)
@@ -83,22 +87,29 @@ table(res5$classification, res0$classification);
 
 
 ## 2. Comparing two sets of simulated error covariance estimates
-file.eps = "Graphs/real_data_simulated_v_beta1.eps";
+## 2020-02-03
+## 2. Comparing two sets of simulated standard errors of the estimated log fold changes
+## used in the paper revision.
+file.eps = "Graphs/real_data_simulated_se_beta1.eps";
 postscript(file.eps, paper="special", width=6, height=6);
 
-plot(err4[1,1,], err5[1,1,],
-     main = "Simulated error variances for the estimated \n log fold changes at 1h",
+plot(sqrt(err4[1,1,]), sqrt(err5[1,1,]),
+     main = "Simulated standard errors for the estimated \n log fold changes at 1h",
+     xlim = c(0, 1),
+     ylim = c(0, 1),
      xlab = "Set 1",
      ylab = "Set 2");
 
 dev.off();
 
 
-file.eps = "Graphs/real_data_simulated_v_beta2.eps";
+file.eps = "Graphs/real_data_simulated_se_beta2.eps";
 postscript(file.eps, paper="special", width=6, height=6);
 
-plot(err4[2,2,], err5[2,2,],
-     main = "Simulated error variances for the estimated \n log fold changes at 3h",
+plot(sqrt(err4[2,2,]), sqrt(err5[2,2,]),
+     main = "Simulated standard errors for the estimated \n log fold changes at 3h",
+     xlim = c(0, 1),
+     ylim = c(0, 1),
      xlab = "Set 1",
      ylab = "Set 2");
 
@@ -111,8 +122,8 @@ postscript(file.eps, paper="special", width=6, height=6);
 
 plot(res.mclust$z[,1], res0$z[,1],
      main = "Estimated membership probability to the non-DE cluster",
-     xlab = "MClust",
-     ylab = "MClust-ME");
+     xlab = "MCLUST",
+     ylab = "MCLUST-ME");
 
 dev.off();
 
@@ -120,8 +131,8 @@ file.eps = "Graphs/real_data_change_in_z_mclust-me-resimulated.v.beta.eps";
 postscript(file.eps, paper="special", width=6, height=6);
 plot(res4$z[,1], res5$z[,1],
      main = "Estimated membership probability to the non-DE cluster",
-     xlab = "MClust-ME with resimulated covariances (seed 1)",
-     ylab = "MClust-ME with resimulated covariances (seed 2)");
+     xlab = "MCLUST-ME with resimulated covariances (seed 1)",
+     ylab = "MCLUST-ME with resimulated covariances (seed 2)");
 dev.off();
 
 ## 4. A table summarizes the data and MCLUST/MCLUST-ME membership probabilities
