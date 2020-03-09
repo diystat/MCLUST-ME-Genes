@@ -1,0 +1,62 @@
+---
+title: "README"
+author: "Yanming Di"
+date: "3/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Code for producing tables and figures in the GENEs paper
+
+Table 1. 
+
+`Paper edit/Edit code/realdata.v3.analysis.R` (## 4)
+
+Figures 1--5
+
+`Code/sim 1.R` generated the simulation results.
+
+`Code/simulation_1_ARI.R` produced the Figures (some repeated codes from sim 1.R).
+
+Table 3
+`Code/simulation_1_ARI.R`
+
+Table 4
+`Paper edit/Edit code/realdata.v2.analysis.R` (`table(group.mclust, group.mcme);`)
+
+Figure 6--8
+`Paper edit/Edit code/uncertainty_vs_errors.Di.R`:
+   `Paper edit/Edit graphs/clustering_results_%d.png`,
+   `Paper edit/Edit graphs/change_prob1_%d.png`,
+   `Paper edit/Edit graphs/points_most_changes_in_uncertainty_%d.png`
+
+Figure 9 
+
+`Paper edit/Edit code/realdata.v2.analysis.R` (`Graphs/real_data_seed%d_clustering_results.%s.png`)
+
+Figure 10
+`Paper edit/Edit code/realdata.v2.analysis.R` (`Graphs/real_data_se_beta_%s.eps`)
+
+Table 5.
+`Paper edit/Edit code/realdata.v3.analysis.R` (##1)
+
+Figure 11
+`Paper edit/Edit code/realdata.v3.analysis.R` (##2)
+
+Figure 12
+`Paper edit/Edit code/realdata.v3.analysis.R` (##3)
+
+Figure 13
+`Paper edit/Edit code/realdata.v4.analysis.R` (`Graphs/real_data_seed%d_clustering_results.%s.png`)
+
+
+
+
+
+
+
+
